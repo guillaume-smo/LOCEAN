@@ -187,7 +187,7 @@ ENDFOR
 
 ; PLOT 2D TRAJ
 key_portrait = 0
-IF write_ps THEN openps, filename=plt_path+'MEAN_TRAJ'
+IF write_ps THEN openps, filename=plt_path+'MEAN_TRACK'
 indbold = (listmatch(date_0,round(date_0)))[*,0]
 plt, glamt, /nodata, /realcont, title='ENSEMBLE MEAN: TRACK', subtitle='', /no_cb, charsize=1.5, charthick=2
 oplot, lon_mslp_0, lat_mslp_0, psym=1, color=0, thick=1, symsize=1
@@ -198,7 +198,7 @@ xyouts, 0.350, 0.125-0.025*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 
 FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', psym=1, color=color_factor*(i+1) MOD 256, thick=1, symsize=1')
-  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+'[indbold], ave_lat_mslp_aro'+strtrim(i,2)+'[indbold], psym=1, color=color_factor*(i+1) MOD 256, thick=2, symsize=2')
+  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+'[indbold], ave_lat_mslp_aro'+strtrim(i,2)+'[indbold], psym=1, color=color_factor*(i+1) MOD 256, thick=thc, symsize=2')
   cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', linestyle=0, color=color_factor*(i+1) MOD 256, thick=thc')
   xyouts, 0.100, 0.125-0.025*(1+i), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
 ENDFOR

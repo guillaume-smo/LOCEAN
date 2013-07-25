@@ -8,9 +8,9 @@ PRO master
 
 
 ; PARAMETERS
-        tc_name       =  'IVAN' ; 'GAEL' ; 'GELANE' ; 'FELLENG' ; 'GIOVANNA' ; 'IVAN'; 'BINGIZA'
+        tc_name       =  'GELANE' ; 'IVAN' ; 'GAEL' ; 'GELANE' ; 'FELLENG' ; 'GIOVANNA' ; 'BINGIZA'
         @def_dates_obs
-	radius        = 100. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
+	radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
         res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
 	dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
         force_rsmc    = 1    ; force to read rmsc best-track (even if present in ibtracs)
@@ -27,7 +27,7 @@ PRO master
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_ECUME_AROME']
+        par_list = [ 'GELA2km_COARE_AROME', 'GELA2km_ECUME_AROME']
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
@@ -51,15 +51,14 @@ PRO master
 
 ; SETUP FIGURES
         write_ps = 1 ; ecriture fichier postscript
-	dom_plt = dom_tc
+	dom_plt = dom_tc & plt_path = ''
 	IF n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+par_list[0]+'_vs_'+par_list[1]+'/'
 	IF n_elements(par_list) EQ 1 AND par_list[0] NE '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'/'
         IF n_elements(par_list) EQ 1 AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
         IF n_elements(date_list) EQ 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+tc_name+'/'
 	IF n_elements(par_list) GT 2 AND n_elements(date_list) GT 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'_'+date_list[0]+'-'+date_list[n_elements(date_list)-1]+'/'	
 	IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
-        plt_path = '/home/gsamson/WORK/IDL/FIGURES/ECUME_CPL_150km/'
-	FILE_MKDIR, plt_path, /NOEXPAND_PATH
+	IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
 
 
 ;------------------------------------------------------------------------------------------------------------------
