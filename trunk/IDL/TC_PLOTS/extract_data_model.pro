@@ -71,35 +71,47 @@ FOR j = 0, tdim-1 DO BEGIN
       imin = imin+1
       imax = imax-1
     ENDWHILE
-
-    WHILE (imax-imin+1 GT nb_pts) DO BEGIN
-      print, 't:',j,' imin/imid/imax/idim:', imin, imid, imax, imax-imin+1, ' xdim:', n_elements(glamt[*,0])
-      IF imid-imin GT (nb_pts-1)/2 THEN imin = imin+1 ELSE imax = imax -1
-      print, 't:',j,' imin/imid/imax/idim:', imin, imid, imax, imax-imin+1, ' xdim:', n_elements(glamt[*,0])   
-      print, ((nb_pts-1)/2-(imid-imin)),((nb_pts-1)/2+(imax-imid)),((nb_pts-1)/2-(jmid-jmin)),((nb_pts-1)/2+(jmax-jmid))
-    ENDWHILE
-
     WHILE (jmax-jmin+1 GT nb_pts+1) DO BEGIN
       jmin = jmin+1
       jmax = jmax-1
     ENDWHILE
 
+    WHILE (imax-imin+1 GT nb_pts) DO BEGIN
+;      print, 't:',j,' imin/imid/imax/idim:', imin, imid, imax, imax-imin+1, ' xdim:', n_elements(glamt[*,0])
+      IF imid-imin GT (nb_pts-1)/2 THEN imin = imin+1 ELSE imax = imax-1
+      imid = imin + (imax-imin+1)/2 & print, 'imid:',imid
+;      print, 't:',j,' imin/imid/imax/idim:', imin, imid, imax, imax-imin+1, ' xdim:', n_elements(glamt[*,0])   
+;      print, ((nb_pts-1)/2-(imid-imin)),((nb_pts-1)/2+(imax-imid)),((nb_pts-1)/2-(jmid-jmin)),((nb_pts-1)/2+(jmax-jmid))
+    ENDWHILE
     WHILE (jmax-jmin+1 GT nb_pts) DO BEGIN
-      print, 't:',j,' jmin/jmid/jmax/jdim:', jmin, jmid, jmax, jmax-jmin+1, ' ydim:', n_elements(glamt[0,*])           
-      IF jmid-jmin GT (nb_pts-1)/2 THEN jmin = jmin+1 ELSE jmax = jmax -1	
-      print, 't:',j,' jmin/jmid/jmax/jdim:', jmin, jmid, jmax, jmax-jmin+1, ' ydim:', n_elements(glamt[0,*])
-      print, ((nb_pts-1)/2-(imid-imin)),((nb_pts-1)/2+(imax-imid)),((nb_pts-1)/2-(jmid-jmin)),((nb_pts-1)/2+(jmax-jmid))
+;      print, 't:',j,' jmin/jmid/jmax/jdim:', jmin, jmid, jmax, jmax-jmin+1, ' ydim:', n_elements(glamt[0,*])           
+      IF jmid-jmin GT (nb_pts-1)/2 THEN jmin = jmin+1 ELSE jmax = jmax-1
+      jmid = jmin + (jmax-jmin+1)/2
+;      print, 't:',j,' jmin/jmid/jmax/jdim:', jmin, jmid, jmax, jmax-jmin+1, ' ydim:', n_elements(glamt[0,*])
+;      print, ((nb_pts-1)/2-(imid-imin)),((nb_pts-1)/2+(imax-imid)),((nb_pts-1)/2-(jmid-jmin)),((nb_pts-1)/2+(jmax-jmid))
     ENDWHILE
 
-    IF ((nb_pts-1)/2+(imax-imid)) GT nb_pts-1 THEN print, 't:',j,' imin/imid/imax/idim/nb_pts:', imin, imid, imax, imax-imin+1, nb_pts
-;	IF ((nb_pts-1)/2+(imax-imid)) GT nb_pts-1 THEN STOP
-    IF ((nb_pts-1)/2+(jmax-jmid)) GT nb_pts-1 THEN print, 't:',j,' jmin/jmid/jmax/jdim/nb_pts:', jmin, jmid, jmax, jmax-jmin+1, nb_pts
-;	IF ((nb_pts-1)/2+(jmax-jmid)) GT nb_pts-1 THEN STOP
+    ibeg = ((nb_pts-1)/2-(imid-imin))
+    iend = ((nb_pts-1)/2+(imax-imid))
+    jbeg = ((nb_pts-1)/2-(jmid-jmin))
+    jend = ((nb_pts-1)/2+(jmax-jmid))
+;    print, 'iend-ibeg+1 =', iend-ibeg+1, ' jend-jbeg+1 =', jend-jbeg+1
+
+    WHILE iend GT nb_pts-1 DO BEGIN
+;      print, 't:',j,' imin/imid/imax/idim/nb_pts:', imin, imid, imax, imax-imin+1, nb_pts
+      IF ibeg GT 0 THEN BEGIN & ibeg = ibeg -1 & iend = iend -1 & ENDIF ELSE STOP
+;      help, ibeg, iend, iend-ibeg-1      
+    ENDWHILE
+    WHILE jend GT nb_pts-1 DO BEGIN
+;      print, 't:',j,' jmin/jmid/jmax/jdim/nb_pts:', jmin, jmid, jmax, jmax-jmin+1, nb_pts
+      IF jbeg GT 0 THEN BEGIN & jbeg = jbeg -1 & jend = jend -1 & ENDIF ELSE STOP
+;      help, jbeg, jend, jend-jbeg-1
+    ENDWHILE
 
 
     ; SAUVEGARDE DES VARIABLES EXTRAITES
-    cmd = execute('lon_2DTC_'+strtrim(i,2)+'[*,*,j] = glamt[imin:imax,jmin:jmax]')
-    cmd = execute('lat_2DTC_'+strtrim(i,2)+'[*,*,j] = gphit[imin:imax,jmin:jmax]')
+    cmd = execute('lon_2DTC_'+strtrim(i,2)+'[ibeg:iend,jbeg:jend,j] = glamt[imin:imax,jmin:jmax]')
+    cmd = execute('lat_2DTC_'+strtrim(i,2)+'[ibeg:iend,jbeg:jend,j] = gphit[imin:imax,jmin:jmax]')
     FOR k = 0, nb_var-1 DO BEGIN
       var = var_list[k]
       cmd = execute('test = n_elements('+var+'_'+strtrim(i,2)+')')
@@ -108,7 +120,7 @@ FOR j = 0, tdim-1 DO BEGIN
 	tmp[ind_bad] = !Values.F_NAN
 	cmd = execute(var+'_1D_'+strtrim(i,2)+'[j] = avg('+var+'_'+strtrim(i,2)+'[*,*,j], /nan)')
 	cmd = execute(var+'_1DTC_'+strtrim(i,2)+'[j] = avg(tmp[imin:imax,jmin:jmax], /nan)')
-	cmd = execute(var+'_2DTC_'+strtrim(i,2)+'[((nb_pts-1)/2-(imid-imin)):((nb_pts-1)/2+(imax-imid)),((nb_pts-1)/2-(jmid-jmin)):((nb_pts-1)/2+(jmax-jmid)),j] = tmp[imin:imax,jmin:jmax]')	
+	cmd = execute(var+'_2DTC_'+strtrim(i,2)+'[ibeg:iend,jbeg:jend,j] = tmp[imin:imax,jmin:jmax]')	
 	; calcul moyenne azimuthale
 	FOR r = 0, long(radius/res_rad)-1 DO BEGIN
 	  rok = where((dist_tc GE r*res_rad) AND (dist_tc LE (r+1)*res_rad))
@@ -129,10 +141,9 @@ FOR j = 0, tdim-1 DO BEGIN
       dist_coast[k] = map_2points( lon_mslp[j], lat_mslp[j], lon_2dtc[indbad[k]], lat_2dtc[indbad[k]], /meters) / 1000.
     ENDFOR
     indcoast = where(dist_coast LT 25., cntcoast)
-
     IF indcoast[0] NE -1 AND cntcoast GT 10 THEN BEGIN
       print, '' & print, exp_list[i], ' dt=', j
-      print, 'coast:', cntcoast, ' bad:', cntbad, ' ok:', cntok
+      print, 'coast:', cntcoast, ' bad:', cntbad, ' ok:', cntok & STOP
       FOR k = 0, nb_var-1 DO BEGIN
 	var = var_list[k]
 	cmd = execute('test = n_elements('+var+'_'+strtrim(i,2)+')')
@@ -146,8 +157,34 @@ FOR j = 0, tdim-1 DO BEGIN
     ENDIF
 
 
+    ; DETECTION PROXIMITE BORD DU DOMAINE (< 25km)
+    indboard = 0
+    cmd = execute( 'south = min(lat_'+strtrim(i,2)+', /nan)' )
+    cmd = execute( 'north = max(lat_'+strtrim(i,2)+', /nan)' )
+    cmd = execute( ' east = min(lon_'+strtrim(i,2)+', /nan)' )
+    cmd = execute( ' west = max(lon_'+strtrim(i,2)+', /nan)' )
+    dist_south = map_2points( lon_mslp[j], lat_mslp[j], lon_mslp[j], south, /meters) / 1000.
+    dist_north = map_2points( lon_mslp[j], lat_mslp[j], lon_mslp[j], north, /meters) / 1000.
+    dist_east  = map_2points( lon_mslp[j], lat_mslp[j], east, lat_mslp[j], /meters) / 1000.
+    dist_west  = map_2points( lon_mslp[j], lat_mslp[j], west, lat_mslp[j], /meters) / 1000.
+    IF dist_south LE 25. OR dist_north LE 25. OR dist_east LE 25. OR dist_west LE 25. THEN BEGIN
+      print, 'DOMAIN BOARDER < 25km DETECTED !'
+      indboard = 1
+      FOR k = 0, nb_var-1 DO BEGIN
+	var = var_list[k]
+	cmd = execute('test = n_elements('+var+'_'+strtrim(i,2)+')')
+	IF test GT 0 THEN BEGIN
+	  tmp[ind_bad] = !Values.F_NAN
+	  cmd = execute( var+'_1DTC_' +strtrim(i,2)+'[j]     = !Values.F_NAN' )
+	  cmd = execute( var+'_2DTC_' +strtrim(i,2)+'[*,*,j] = !Values.F_NAN' )
+	  cmd = execute( var+'_RADTC_'+strtrim(i,2)+'[*,j]   = !Values.F_NAN' )
+	ENDIF
+      ENDFOR
+    ENDIF
+      
+
     ; SAUVEGARDE PARAMETRES TC
-    IF indcoast[0] EQ -1 THEN BEGIN
+    IF indcoast[0] EQ -1 AND indboard NE 1 THEN BEGIN
       cmd = execute('RVM_1DTC_'+strtrim(i,2)+'[j] = where(w10m_sea_radtc_'+strtrim(i,2)+'[*,j] EQ max(w10m_sea_radtc_'+strtrim(i,2)+'[*,j] , /nan)) * res_rad')
       cmd = execute('MAX_W10M_RADTC_'+strtrim(i,2)+'[j] = MAX(W10M_SEA_RADTC_'+strtrim(i,2)+'[*,j], /NAN)')
       cmd = execute('lon_maxwnd_'+strtrim(i,2)+'[j] = lon_maxwnd[j]')

@@ -28,10 +28,10 @@ FOR i = 0, nb_exp-1 DO BEGIN
   oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256
   IF i LE 8 THEN BEGIN
     xyouts, 0.125, 0.180-0.020*i, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.380, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDIF ELSE BEGIN
     xyouts, 0.525, 0.180-0.020*(i-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.780, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MAXW10M.gif', quality=100
@@ -42,7 +42,7 @@ FOR i = 0, nb_par-1 DO BEGIN
   jpt = n_elements(juld) & time = juld + 0.50d
   pltt, var, 't', minplot, maxplot, xminor=4, title='TC MAX 10M-WIND', subtitle='', ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2
   xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
-  xyouts, 0.380, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
+  xyouts, 0.400, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
   FOR j = 0, nb_date-1 DO BEGIN
     k = i * nb_date + j + 1
     cmd = execute(' var = max_w10m_'+strtrim(k,2))
@@ -52,10 +52,10 @@ FOR i = 0, nb_par-1 DO BEGIN
     oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*(j+1) MOD 256
     IF j LE 8 THEN BEGIN
       xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDIF ELSE BEGIN
       xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDELSE
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MAXW10M_'+par_list[i]+'.gif', quality=100
@@ -84,10 +84,10 @@ FOR i = 0, nb_exp-1 DO BEGIN
   oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256
   IF i LE 8 THEN BEGIN
     xyouts, 0.125, 0.180-0.020*i, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.380, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDIF ELSE BEGIN
     xyouts, 0.525, 0.180-0.020*(i-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.780, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MAXW10M_RADTC.gif', quality=100
@@ -98,7 +98,7 @@ FOR i = 0, nb_par-1 DO BEGIN
   jpt = n_elements(juld) & time = juld + 0.50d
   pltt, var, 't', minplot, maxplot, xminor=4, title='TC MAX 10M-WIND (AZIMUTHAL AVERAGE)', subtitle='', ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2
   xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
-  xyouts, 0.380, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
+  xyouts, 0.400, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
   FOR j = 0, nb_date-1 DO BEGIN
     k = i * nb_date + j + 1
     cmd = execute(' var = max_w10m_radtc_'+strtrim(k,2))
@@ -108,10 +108,10 @@ FOR i = 0, nb_par-1 DO BEGIN
     oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*(j+1) MOD 256
     IF j LE 8 THEN BEGIN
       xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDIF ELSE BEGIN
       xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDELSE
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MAXW10M_RADTC_'+par_list[i]+'.gif', quality=100
@@ -140,10 +140,10 @@ FOR i = 0, nb_exp-1 DO BEGIN
   oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256
   IF i LE 8 THEN BEGIN
     xyouts, 0.125, 0.180-0.020*i, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.380, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDIF ELSE BEGIN
     xyouts, 0.525, 0.180-0.020*(i-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.780, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MINMSLP.gif', quality=100
@@ -154,7 +154,7 @@ FOR i = 0, nb_par-1 DO BEGIN
   jpt = n_elements(juld) & time = juld + 0.50d
   pltt, var, 't', minplot, maxplot, xminor=4, title='TC MIN MSLP', subtitle='', ytitle='MSLP (hPa)', thick=thc, charsize=1.5, charthick=2
   xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
-  xyouts, 0.380, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
+  xyouts, 0.400, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
   FOR j = 0, nb_date-1 DO BEGIN
     k = i * nb_date + j + 1
     cmd = execute(' var = min_mslp_'+strtrim(k,2))
@@ -164,10 +164,10 @@ FOR i = 0, nb_par-1 DO BEGIN
     oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*(j+1) MOD 256
     IF j LE 8 THEN BEGIN
       xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDIF ELSE BEGIN
       xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDELSE
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_MINMSLP_'+par_list[i]+'.gif', quality=100
@@ -197,10 +197,10 @@ FOR i = 0, nb_exp-1 DO BEGIN
   oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256
   IF i LE 8 THEN BEGIN
     xyouts, 0.125, 0.180-0.020*i, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.380, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDIF ELSE BEGIN
     xyouts, 0.525, 0.180-0.020*(i-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.780, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_RVM_RADTC.gif', quality=100
@@ -211,7 +211,7 @@ FOR i = 0, nb_par-1 DO BEGIN
   jpt = n_elements(juld) & time = juld + 0.50d
   pltt, var, 't', minplot, maxplot, xminor=4, title='TC RMW', subtitle='', ytitle='RADIUS (km)', thick=thc, charsize=1.5, charthick=2
   xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
-  xyouts, 0.380, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
+  xyouts, 0.400, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
   FOR j = 0, nb_date-1 DO BEGIN
     k = i * nb_date + j + 1
     cmd = execute(' var = RVM_1DTC_'+strtrim(k,2))
@@ -221,10 +221,10 @@ FOR i = 0, nb_par-1 DO BEGIN
     oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*(j+1) MOD 256
     IF j LE 8 THEN BEGIN
       xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDIF ELSE BEGIN
       xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDELSE
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_RVM_RADTC_'+par_list[i]+'.gif', quality=100
@@ -274,10 +274,10 @@ FOR i = 1, nb_exp-1 DO BEGIN
   oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*icol MOD 256
   IF i LE 8 THEN BEGIN
     xyouts, 0.125, 0.180-0.020*icol, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.380, 0.180-0.020*icol, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*icol, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDIF ELSE BEGIN
     xyouts, 0.525, 0.180-0.020*(icol-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-    xyouts, 0.780, 0.180-0.020*(icol-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(icol-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_SST_1DTC.gif', quality=100
@@ -288,7 +288,7 @@ FOR i = 0, nb_par-1 DO BEGIN
   jpt = n_elements(juld) & time = juld + 0.50d
   pltt, var, 't', minplot, maxplot, xminor=4, title='TC SST', subtitle='', ytitle='SST (degC)', thick=thc, charsize=1.5, charthick=2
   xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
-  xyouts, 0.380, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
+  xyouts, 0.400, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1, charthick=2, color=color_factor*0 MOD 256
   FOR j = 0, nb_date-1 DO BEGIN
     k = i * nb_date + j + 1
     cmd = execute(' var = sst_1dtc_'+strtrim(k,2)+'-273.15')
@@ -298,10 +298,10 @@ FOR i = 0, nb_par-1 DO BEGIN
     oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*(j+1) MOD 256
     IF j LE 8 THEN BEGIN
       xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDIF ELSE BEGIN
       xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-      xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+      xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
     ENDELSE
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_SST_'+par_list[i]+'.gif', quality=100

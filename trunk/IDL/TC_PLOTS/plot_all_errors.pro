@@ -34,10 +34,10 @@ FOR l = 0, nb_err-1 DO BEGIN
       oplot, lead_time_arom, var, color=color_factor*(j+1) MOD 256, thick=thc
       IF j LE 8 THEN BEGIN
         xyouts, 0.125, 0.180-0.020*(j+1), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-        xyouts, 0.380, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+        xyouts, 0.400, 0.180-0.020*(j+1), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
       ENDIF ELSE BEGIN
         xyouts, 0.525, 0.180-0.020*(j+1-8), exp_list[k], /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
-        xyouts, 0.780, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
+        xyouts, 0.800, 0.180-0.020*(j+1-8), '('+alt_list[k]+')', /normal, charsize=1, charthick=2, color=color_factor*(j+1) MOD 256
       ENDELSE
     ENDFOR
   ENDFOR

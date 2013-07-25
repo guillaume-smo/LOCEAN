@@ -80,8 +80,8 @@ IF ind_arom[0] NE -1 THEN BEGIN
 
   ; declaration
   nb_maxexp = !VALUES.F_NAN  
-  FOR i = 0, nb_par-1 DO cmd = execute('nb_maxexp = max([nb_maxexp, nb_aro'+strtrim(i,2)+'], /nan)')
-  FOR i = 0, nb_err-1 DO cmd = execute('all_'+err_list[i]+' = FLTARR( nb_par, maxnbt_arom, nb_maxexp) + !VALUES.F_NAN' )
+  FOR i = 0, nb_par-1 DO cmd = execute( 'nb_maxexp = max([nb_maxexp, nb_aro'+strtrim(i,2)+'], /nan)' )
+  FOR i = 0, nb_err-1 DO cmd = execute( 'all_'+err_list[i]+' = FLTARR( nb_par, maxnbt_arom, nb_maxexp) + !VALUES.F_NAN' )
 
   ; calcul erreur moyenne par critere
   FOR m = 0, nb_par-1 DO BEGIN
@@ -108,24 +108,34 @@ IF ind_arom[0] NE -1 THEN BEGIN
     cmd = execute( 'help, '+var+'_arom' )
   ENDFOR
 
+  ; calcul nombre d'experiences valides par echeance
+  FOR j = 0, nb_err-1 DO BEGIN
+    cmd = execute( ' nb_'+err_list[j]+'_arom = INTARR(maxnbt_arom)' )
+    FOR i = 0, maxnbt_arom-1 DO BEGIN
+      cmd = execute( 'nb_'+err_list[j]+'_arom[i] = fix(n_elements(where(finite(tmp[*,i]) EQ 1)))' )
+      IF j EQ 0 THEN print, i, where(finite(tmp[*,i]) EQ 1)
+    ENDFOR
+  ENDFOR
+
 ENDIF
 
 
-; STATISTICAL SIGNIFICANCE
-IF nb_par EQ 2 THEN BEGIN
+; STATISTICAL SIGNIFICANCE ENTRE 2 CRITERES
+IF nb_par EQ 2 AND nb_date GE 5 THEN BEGIN
 
   ; declarations
   FOR i = 0, nb_err-1 DO cmd = execute( 'tmtest_'+err_list[i]+'_arom = FLTARR(maxnbt_arom) + !VALUES.F_NAN' )
 
   ; calcul test
   FOR i = 0, maxnbt_arom-1 DO BEGIN
-    FOR j = 0, nb_err-1 DO $
-    cmd = execute( 'tmtest_'+err_list[j]+'_arom[i] = (TM_TEST(REFORM(all_'+err_list[j]+'[0,i,where(finite(all_'+err_list[j]+'[0,i,*]))]), '+''+$
-                                                             'REFORM(all_'+err_list[j]+'[1,i,where(finite(all_'+err_list[j]+'[1,i,*]))])))[1]' )
+    FOR j = 0, nb_err-1 DO BEGIN
+      cmd = execute( 'tmtest_'+err_list[j]+'_arom[i] = (TM_TEST(REFORM(all_'+err_list[j]+'[0,i,where(finite(all_'+err_list[j]+'[0,i,*]))]), '+''+$
+                                                               'REFORM(all_'+err_list[j]+'[1,i,where(finite(all_'+err_list[j]+'[1,i,*]))])))[1]' )
+    ENDFOR
   ENDFOR
 
   ; 1 = ok
-  FOR i = 0, nb_err-1 DO BEGIN
+  FOR j = 0, nb_err-1 DO BEGIN
     cmd = execute( 'tmtest_'+err_list[j]+'_arom[where(tmtest_'+err_list[j]+'_arom LE 0.10, complement=bad)] = 1 & tmtest_'+err_list[j]+'_arom[bad] = 0' )
     cmd = execute( 'tmtest_'+err_list[j]+'_arom = fix(tmtest_'+err_list[j]+'_arom)' )
   ENDFOR

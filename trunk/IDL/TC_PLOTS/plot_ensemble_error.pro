@@ -38,11 +38,12 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   min = strtrim(round( min(var,/nan)),2)
   max = strtrim(round( max(var,/nan)),2)
   ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_errdist_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_errdist_arom,2), charsize=1, charthick=2 
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errdist_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errdist_arom,2), charsize=1, charthick=2
 ENDFOR
 ;oplot, lead_time_arom, errdist_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_DIST_1DTC.gif', quality=100
@@ -72,11 +73,12 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   min = strtrim(round( min(var,/nan)),2)
   max = strtrim(round( max(var,/nan)),2)
   ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_errwind_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_errwind_arom,2), charsize=1, charthick=2  
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwind_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errwind_arom,2), charsize=1, charthick=2
 ENDFOR
 oplot, lead_time_arom, errwind_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_W10M_1DTC.gif', quality=100
@@ -106,11 +108,12 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   min = strtrim(round( min(var,/nan)),2)
   max = strtrim(round( max(var,/nan)),2)
   ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_errwrad_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_errwrad_arom,2), charsize=1, charthick=2  
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwrad_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errwrad_arom,2), charsize=1, charthick=2
 ENDFOR
 oplot, lead_time_arom, errwrad_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_W10MRAD_1DTC.gif', quality=100
@@ -140,11 +143,12 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   min = strtrim(round( min(var,/nan)),2)
   max = strtrim(round( max(var,/nan)),2)
   ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' hPa', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_errmslp_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_errmslp_arom,2), charsize=1, charthick=2  
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' hPa', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errmslp_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errmslp_arom,2), charsize=1, charthick=2
 ENDFOR
 oplot, lead_time_arom, errmslp_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_MSLP_1DTC.gif', quality=100
@@ -174,11 +178,12 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   min = strtrim(round( min(var,/nan)),2)
   max = strtrim(round( max(var,/nan)),2)
   ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_err_rmw_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_err_rmw_arom,2), charsize=1, charthick=2  
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_rmw_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_err_rmw_arom,2), charsize=1, charthick=2
 ENDFOR
 oplot, lead_time_arom, err_rmw_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_RMW_1DTC.gif', quality=100
@@ -205,14 +210,15 @@ IF finite(err_sst_alad[0]) EQ 1 THEN xyouts, 0.125, 0.200-0.020*0, 'ALADIN', /no
 
 FOR i = 0, n_elements(par_list)-1 DO BEGIN
   cmd = execute('var = err_sst_aro'+strtrim(i,2))
-  min = strtrim(round( min(var,/nan)),2)
-  max = strtrim(round( max(var,/nan)),2)
-  ave = strtrim(round(mean(abs(var),/nan)),2)
-  oplot, lead_time_arom, var, color=color_factor*i MOD 256, thick=thc
-  xyouts, 0.125, 0.180-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=i*color_factor MOD 256
-  xyouts, 0.550, 0.180-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' K', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.100*(maxplot-minplot), strtrim(tmtest_err_sst_arom,2), charsize=1, charthick=2
-  IF nb_par EQ 2 THEN xyouts, lead_time_arom, minplot-0.125*(maxplot-minplot), strtrim(nb_err_sst_arom,2), charsize=1, charthick=2
+  min = string( min(var,/nan), format='(F3.1)')
+  max = string( max(var,/nan), format='(F3.1)')
+  ave = string(mean(abs(var),/nan), format='(F3.1)')
+  oplot, lead_time_arom, var, color=(i+1)*color_factor MOD 256, thick=thc
+  xyouts, 0.125, 0.125-0.020*i, par_list[i], /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  xyouts, 0.550, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' K', /normal, charsize=1, charthick=2, color=(i+1)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, lead_time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_sst_arom,2), charsize=1, charthick=2 $
+  ELSE xyouts, lead_time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1, charthick=2
+  xyouts, lead_time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_err_sst_arom,2), charsize=1, charthick=2
 ENDFOR
 oplot, lead_time_arom, err_sst_arom*0., thick=1, linestyle=2
 IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_SST_1DTC.gif', quality=100

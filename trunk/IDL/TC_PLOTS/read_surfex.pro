@@ -1,5 +1,6 @@
-print, ''
-print, 'READING SURFEX FILES...'
+print, '' & print, 'READING SURFEX FILES...'
+
+
 IF i EQ 1 THEN idate = -1
 idate = (idate + 1) MOD n_elements(date_list)
 

@@ -31,8 +31,8 @@
   jpt = tdim
   cmd = execute('help, ZON10M_SEA_'+strtrim(i,2)+',MER10M_SEA_'+strtrim(i,2))
 ;  cmd = execute('vor10m = curl(ZON10M_SEA_'+strtrim(i,2)+',MER10M_SEA_'+strtrim(i,2)+', MILLION=1) & help, vor10m')
-  cmd = execute('lon_2DTC_'+strtrim(i,2)+' = fltarr(nb_pts, nb_pts, tdim) & help, lon_2DTC_'+strtrim(i,2))
-  cmd = execute('lat_2DTC_'+strtrim(i,2)+' = fltarr(nb_pts, nb_pts, tdim) & help, lat_2DTC_'+strtrim(i,2))
+  cmd = execute('lon_2DTC_'+strtrim(i,2)+' = fltarr(nb_pts, nb_pts, tdim) + !Values.F_NAN & help, lon_2DTC_'+strtrim(i,2))
+  cmd = execute('lat_2DTC_'+strtrim(i,2)+' = fltarr(nb_pts, nb_pts, tdim) + !Values.F_NAN & help, lat_2DTC_'+strtrim(i,2))
 
   FOR k = 0, nb_var-1 DO BEGIN
     var = var_list[k]
