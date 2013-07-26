@@ -101,20 +101,18 @@ IF ind_arom[0] NE -1 THEN BEGIN
 
   ; calcul erreur moyenne pour toutes les simus
   FOR k = 0, nb_err-1 DO BEGIN
+
     var = err_list[k]
     tmp = fltarr(nb_arom, maxnbt_arom) + !VALUES.F_NAN
     FOR j = 0, nb_arom-1 DO cmd = execute( 'tmp[j,*] = '+var+'_'+strtrim(ind_arom[j],2) )
-    cmd = execute( var+'_arom = mean(tmp, DIM=1, /NAN)')
-    cmd = execute( 'help, '+var+'_arom' )
-  ENDFOR
+    cmd = execute( var+'_arom = mean(tmp, DIM=1, /NAN) & help, '+var+'_arom')
 
-  ; calcul nombre d'experiences valides par echeance
-  FOR j = 0, nb_err-1 DO BEGIN
-    cmd = execute( ' nb_'+err_list[j]+'_arom = INTARR(maxnbt_arom)' )
+    ; calcul nombre d'experiences valides par echeance
+    cmd = execute( 'nb_'+var+'_arom = INTARR(maxnbt_arom)' )
     FOR i = 0, maxnbt_arom-1 DO BEGIN
-      cmd = execute( 'nb_'+err_list[j]+'_arom[i] = fix(n_elements(where(finite(tmp[*,i]) EQ 1)))' )
-      IF j EQ 0 THEN print, i, where(finite(tmp[*,i]) EQ 1)
+      cmd = execute( 'nb_'+var+'_arom[i] = fix(n_elements(where(finite(tmp[*,i]) EQ 1)))' )
     ENDFOR
+    
   ENDFOR
 
 ENDIF

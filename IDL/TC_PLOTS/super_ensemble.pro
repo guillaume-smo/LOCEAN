@@ -21,7 +21,7 @@ PRO super_ensemble
    FOR i = 0, nb_tc-1 DO BEGIN
 
 
-     ; ERREUR MOYENNE PAR CYCLONE+CRITERE
+     ; ERREUR PAR CYCLONE+CRITERE MOYENNEE POUR TOUS LES MEMBRES (RESEAUX)
      tc_name = tc_list[i]
      tc_path = exp_path + 'EXPS_'+STRMID(tc_name,0,4)+STRMID(par_list[j],0,3)+'/'
      exp_name = STRMID(tc_name,0,4)+par_list[j]
@@ -31,7 +31,7 @@ PRO super_ensemble
      FOR k = 0, nb_var-1 DO cmd = execute( 'help, '+var_list[k]+'_'+exp_name) & print, ''
 
 
-     ; ERREUR DE TOUS LES MEMBRES PAR CYCLONE+CRITERE
+     ; ERREUR PAR CYCLONE+CRITERE DE TOUS LES MEMBRES (RESEAUX)
      file_list = FILE_SEARCH(tc_path+'*'+par_list[j]+'*/ERRORS_TC.idl')
      nb_file   = n_elements(file_list)
      FOR k = 0, nb_var-1 DO cmd = execute( 'ALL_'+var_list[k]+'_'+exp_name+' = FLTARR(nb_file,nb_ech) + !VALUES.F_NAN' )
@@ -41,19 +41,20 @@ PRO super_ensemble
        contents = obj->IDL_Savefile::Contents()    ; & help, contents, /st
        IF contents.n_var GE 1 THEN restore_list = obj->IDL_Savefile::Names()
        OBJ_DESTROY, obj
-       print, 'RESTORE: ', file_list[k]
+       print, strtrim(k,2), ' RESTORE: ', file_list[k]
        RESTORE, file_list[k];, /VERBOSE
-       file_id = STRMID(restore_list[0],9,1)
+       file_id = STRMID(restore_list[0],9,2)
        FOR l = 0, nb_var-1 DO BEGIN
 	 cmd = execute( 'nb_echvar = n_elements('+var_list[l]+'_'+file_id+')' )
 	 cmd = execute( 'ALL_'+var_list[l]+'_'+exp_name+'[k,0:nb_echvar-1] = '+var_list[l]+'_'+file_id )
        ENDFOR
      ENDFOR
      FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+exp_name ) & print, ''
+     cmd = execute( 'print, ALL_ERRMSLP_'+exp_name )
+STOP
 
-
-     ; VERIF
-     print, '' & print, 'VERIFICATION...'
+     ; VERIF "ERR_TC_PAR = MEAN(ALL_ERR_TC_PAR)"
+     print, '' & print, 'VERIFICATION '+exp_name+'...'
      FOR k = 0, nb_var-1 DO BEGIN
        cmd = execute( var_list[k]+'_'+exp_name+'_VERIF = FLTARR(nb_ech) + !VALUES.F_NAN' )
        FOR l = 0, nb_ech-1 DO BEGIN
@@ -63,12 +64,12 @@ PRO super_ensemble
        print, 'test =', test
        IF test NE 0 THEN STOP
      ENDFOR
-     print, 'VERIFICATION TERMINEE' & print, ''
+     print, 'VERIFICATION '+exp_name+' OK' & print, ''
 
    ENDFOR ; nb_tc loop
 
 
-   ; ERREUR DE TOUS LES MEMBRES PAR CRITERE
+   ; ERREUR DE TOUS LES MEMBRES (RESEAUX) PAR CRITERE
    print, ''   
    file_list = FILE_SEARCH(exp_path+'EXPS_*'+STRMID(par_list[j],0,3)+'/*'+par_list[j]+'*/ERRORS_TC.idl')
    nb_file   = n_elements(file_list)
@@ -78,9 +79,9 @@ PRO super_ensemble
      contents = obj->IDL_Savefile::Contents()    ; & help, contents, /st
      IF contents.n_var GE 1 THEN restore_list = obj->IDL_Savefile::Names()
      OBJ_DESTROY, obj
-     print, 'RESTORE: ', file_list[k]     
+     print, strtrim(k,2), ' RESTORE: ', file_list[k]     
      RESTORE, file_list[k];, /VERBOSE
-     file_id = STRMID(restore_list[0],9,1)
+     file_id = STRMID(restore_list[0],9,2)
      FOR l = 0, nb_var-1 DO BEGIN
        cmd = execute( 'nb_echvar = n_elements('+var_list[l]+'_'+file_id+')' )
        cmd = execute( 'ALL_'+var_list[l]+'_'+par_list[j]+'[k,0:nb_echvar-1] = '+var_list[l]+'_'+file_id )
@@ -90,7 +91,7 @@ PRO super_ensemble
    FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+par_list[j] )
    
 
- ENDFOR
+ ENDFOR ; nb_par loop
  print, 'LECTURE OK' & print, '' & STOP
 
 
@@ -99,18 +100,19 @@ PRO super_ensemble
  FOR i = 0, nb_par-1 DO BEGIN
    FOR j = 0, nb_var-1 DO BEGIN
 
-     ; MOYENNE DES MOYENNES PAR CYCLONES
+     ; liste "MOYENNE DES MOYENNES PAR CYCLONE"
      mean_list = STRARR(nb_tc)
-     FOR k = 0, nb_tc-1 DO mean_list[k] = var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'[k]'; & help, mean_list
+     FOR k = 0, nb_tc-1 DO mean_list[k] = var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'[k]' & help, mean_list
 
-     ; MOYENNE DES MOYENNES PAR CYCLONES ISSUE DE VERIF
+     ; liste "MOYENNE DES MOYENNES PAR CYCLONES ISSUE DE VERIF"
      mean_list_verif = STRARR(nb_tc)
-     FOR k = 0, nb_tc-1 DO mean_list_verif[k] = var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'_VERIF[k]'; & help, mean_list_verif
+     FOR k = 0, nb_tc-1 DO mean_list_verif[k] = var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'_VERIF[k]' & help, mean_list_verif
 
-     ; MOYENNE DE TOUS LES MEMBRES DE TOUS LES CYCLONES
+     ; liste "MOYENNE DE TOUS LES MEMBRES DE TOUS LES CYCLONES"
      mean_list_noweight = STRARR(nb_tc)
-     FOR k = 0, nb_tc-1 DO mean_list_noweight[k] = 'ALL_'+var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'[*,k]'; & help, mean_list_noweight 
+     FOR k = 0, nb_tc-1 DO mean_list_noweight[k] = 'ALL_'+var_list[j]+'_'+STRMID(tc_list[k],0,4)+par_list[i]+'[*,k]' & help, mean_list_noweight 
 
+     ; declarations
      cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+' = FLTARR(nb_ech)' )
      cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'_verif = FLTARR(nb_ech)' )
      cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'_noweight = FLTARR(nb_ech)' )
@@ -119,10 +121,13 @@ PRO super_ensemble
      cmd = execute( ' std_'+var_list[j]+'_'+par_list[i]+'_noweight = FLTARR(nb_ech)' )
 
      FOR k = 0, nb_ech-1 DO BEGIN
+       ; moyenne des moyennes par cyclone
        cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'[k] =   mean( ['+STRJOIN(mean_list,', ', /SINGLE)+'], /nan)' )
        cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'_verif[k] = mean( ['+STRJOIN(mean_list_verif,', ', /SINGLE)+'], /nan)' )
+       ; moyenne de tous les membres de tous les cyclones 
        cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'_noweight[k] = mean( ['+STRJOIN(mean_list_noweight,', ', /SINGLE)+'], /nan)' )
        cmd = execute( 'mean_'+var_list[j]+'_'+par_list[i]+'_noweight_verif[k] = mean( ALL_'+var_list[j]+'_'+par_list[i]+'[*,k], /nan)' )
+       ; standard deviation
        cmd = execute( ' std_'+var_list[j]+'_'+par_list[i]+'[k] = stddev( ['+STRJOIN(mean_list,', ', /SINGLE)+'], /nan)' )
        cmd = execute( ' std_'+var_list[j]+'_'+par_list[i]+'_noweight[k] = stddev( ['+STRJOIN(mean_list_noweight,', ', /SINGLE)+'], /nan)' )
      ENDFOR
@@ -130,16 +135,28 @@ PRO super_ensemble
      ; VERIFICATION
      cmd = execute( 'test = TOTAL(ROUND(mean_'+var_list[j]+'_'+par_list[i]+'*100.) - ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_verif*100.), /PRESERVE_TYPE) ')
      print, 'test =', test
-     IF test NE 0 THEN STOP
+     IF test NE 0 THEN BEGIN
+       print, var_list[j], par_list[i]
+       cmd = execute( 'print, "ROUND(mean_'+var_list[j]+'_'+par_list[i]+'*100.) =", ROUND(mean_'+var_list[j]+'_'+par_list[i]+'*100.)' )
+       cmd = execute( 'print, "ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_verif*100.) =", ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_verif*100.)' )
+       STOP
+    ENDIF
+
      cmd = execute( 'test_noweight = TOTAL(ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight*100.) - ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight_verif*100.), /PRESERVE_TYPE) ')
      print, 'test_noweight =', test_noweight
-     IF test_noweight NE 0 THEN STOP
+     IF test_noweight NE 0 THEN BEGIN
+       print, var_list[j], ' ', par_list[i]
+       cmd = execute( 'print, "ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight*100.) =", ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight*100.)' )
+       cmd = execute( 'print, "ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight_verif*100.) =", ROUND(mean_'+var_list[j]+'_'+par_list[i]+'_noweight_verif*100.)' )
+       STOP
+     ENDIF
 
    ENDFOR
  ENDFOR
- print, ' CALCUL OK' & print, '' & STOP
+ print, 'CALCUL OK' & print, '' & STOP
 
 
+; TEST SIGNIFICATIVITE
  print, '' & print, 'TESTS SIGNIFICATIVITE...'
  IF nb_par EQ 2 THEN BEGIN
    FOR i = 0, nb_var-1 DO BEGIN
