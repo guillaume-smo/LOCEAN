@@ -8,17 +8,17 @@ PRO master
 
 
 ; PARAMETERS
-        tc_name       =  'GELANE' ; 'IVAN' ; 'GAEL' ; 'GELANE' ; 'FELLENG' ; 'GIOVANNA' ; 'BINGIZA'
+        tc_name       =  'FELLENG' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
         @def_dates_obs
 	radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
         res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
 	dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
         force_rsmc    = 1    ; force to read rmsc best-track (even if present in ibtracs)
-	degrad_surfex = 0 ; DEGRADATION RESOLUTION MODELES (0 ou 1)
+	degrad_surfex = 0    ; DEGRADATION RESOLUTION MODELES (0 ou 1)
 	degrad_aladin = 0
-        use_ald_anal  = 0 ; rajoute les analyses  aladin
-        use_ald_oper  = 0 ; rajoute les forecasts aladin
-	restore_extract_data = 0 ; read model data already extracted from idl files
+        use_ald_anal  = 0    ; rajoute les analyses  aladin
+        use_ald_oper  = 0    ; rajoute les forecasts aladin
+	restore_extract_data = 1 ; read model data already extracted from idl files
 
 
 ; SST PRODUCTS 
@@ -27,7 +27,7 @@ PRO master
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'GELA2km_COARE_AROME', 'GELA2km_ECUME_AROME']
+        par_list = [ 'FELL2km_COARE_AROME', 'FELL2km_ECUME_AROME' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
