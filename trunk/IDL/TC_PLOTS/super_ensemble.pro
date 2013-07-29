@@ -3,7 +3,7 @@ PRO super_ensemble
 
 
  exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
- plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE/'
+ plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_IVAN8/'
  tc_list  = [ 'IVAN' , 'GAEL' , 'GELANE' , 'GIOVANNA' , 'FELLENG' ]
 ; tc_year  = [ '2008' , '2009' , '2010'   , '2012'     , '2013'    ]
  nb_tc    = n_elements(tc_list)
@@ -13,6 +13,8 @@ PRO super_ensemble
  unt_list = [ '(km)', '(m/s)' , '(m/s)' , '(hPa)' , '(km)' , '(K)' ]
  nb_var   = n_elements(var_list)
  nb_ech   = 96/6+1
+ write_ps = 1 
+ FILE_MKDIR, plt_path, /NOEXPAND_PATH
 
 
  print, '' & print, 'LECTURE ERROR FILES...' & print, ''
@@ -49,9 +51,9 @@ PRO super_ensemble
 	 cmd = execute( 'ALL_'+var_list[l]+'_'+exp_name+'[k,0:nb_echvar-1] = '+var_list[l]+'_'+file_id )
        ENDFOR
      ENDFOR
-     FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+exp_name ) & print, ''
-     cmd = execute( 'print, ALL_ERRMSLP_'+exp_name )
-STOP
+     print, '' & FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+exp_name )
+;     cmd = execute( 'print, ALL_ERRMSLP_'+exp_name ) & STOP
+
 
      ; VERIF "ERR_TC_PAR = MEAN(ALL_ERR_TC_PAR)"
      print, '' & print, 'VERIFICATION '+exp_name+'...'
@@ -88,7 +90,7 @@ STOP
      ENDFOR
    ENDFOR
    print, ''
-   FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+par_list[j] )
+   FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+par_list[j] ) & print, ''
    
 
  ENDFOR ; nb_par loop
@@ -177,13 +179,15 @@ STOP
  print, 'TESTS OK' & print, ''
 
 
+
+; PLOTS
  print, '' & print, 'PLOTS MOYENNES...'
  lct, 60
  key_portrait=1
  color_factor=70
- write_ps = 0
  IF write_ps THEN thc = 6 ELSE thc = 2
  time = indgen(nb_ech)*6
+
 
  ; PLOTS "MOYENNE DE MOYENNES"
  FOR i = 0, nb_var-1 DO BEGIN
@@ -206,8 +210,8 @@ STOP
 
    cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[0] )
    splot, time, var, XTICKINTERVAL=12, xminor=2, yrange=[minplot,maxplot], xrange=[0, max(time)], $
-   title='ENSEMBLE MEAN '+STRUPCASE(var_list[i]), xtitle='FORECAST TIME (hours)', thick=1, $
-   ytitle=STRUPCASE(var_list[i])+' '+unt_list[i], xgridstyle=2, xticklen=1.0
+   title='ENSEMBLE MEAN: '+STRUPCASE(var_list[i]), xtitle='FORECAST TIME (hours)', thick=1, $
+   ytitle=STRUPCASE(var_list[i])+' '+unt_list[i], xgridstyle=2, xticklen=1.0, charsize=1.5, charthick=2
    oplot, [0,max(time)], [0,0], thick=thc
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j] )
@@ -216,11 +220,11 @@ STOP
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
      xyouts, 0.120, 0.150-0.020*(j+2), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
    ENDFOR
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.100*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.125*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.150*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.180*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
    xyouts, 0.120, 0.150-0.020, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
-   xyouts, time[0]-6, minplot-0.100*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
-   xyouts, time[0]-6, minplot-0.125*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
+   xyouts, time[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
+   xyouts, time[0]-6, minplot-0.180*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
    IF write_ps THEN closeps ELSE saveimage, plt_path+plt_name, quality=100
 
  ENDFOR
@@ -247,8 +251,8 @@ STOP
 
    cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[0]+'_noweight' )
    splot, time, var, XTICKINTERVAL=12, xminor=2, yrange=[minplot,maxplot], xrange=[0, max(time)], $
-   title='ENSEMBLE MEAN (NO WEIGHT) '+STRUPCASE(var_list[i]), xtitle='FORECAST TIME (hours)', thick=1, $
-   ytitle=STRUPCASE(var_list[i])+' '+unt_list[i], xgridstyle=2, xticklen=1.0
+   title='ENSEMBLE MEAN (NO WEIGHT): '+STRUPCASE(var_list[i]), xtitle='FORECAST TIME (hours)', thick=1, $
+   ytitle=STRUPCASE(var_list[i])+' '+unt_list[i], xgridstyle=2, xticklen=1.0, charsize=1.5, charthick=2
    oplot, [0,max(time)], [0,0], thick=thc
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j]+'_noweight' )
@@ -257,16 +261,18 @@ STOP
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
      xyouts, 0.120, 0.150-0.020*(j+2), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
    ENDFOR
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.100*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.125*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.150*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.180*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
    xyouts, 0.120, 0.150-0.020, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
-   xyouts, time[0]-6, minplot-0.100*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
-   xyouts, time[0]-6, minplot-0.125*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
+   xyouts, time[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
+   xyouts, time[0]-6, minplot-0.180*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
    IF write_ps THEN closeps ELSE saveimage, plt_path+plt_name, quality=100
 
  ENDFOR
-
+ SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
  print, 'PLOTS OK' & print, ''
+
+ print, 'SUPER_ENSEMBLE OK'
 
 STOP
 END

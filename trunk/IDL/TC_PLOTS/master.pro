@@ -8,7 +8,7 @@ PRO master
 
 
 ; PARAMETERS
-        tc_name       =  'FELLENG' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
+        tc_name       =  'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
         @def_dates_obs
 	radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
         res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
@@ -18,16 +18,16 @@ PRO master
 	degrad_aladin = 0
         use_ald_anal  = 0    ; rajoute les analyses  aladin
         use_ald_oper  = 0    ; rajoute les forecasts aladin
-	restore_extract_data = 1 ; read model data already extracted from idl files
+	restore_extract_data = 0 ; read model data already extracted from idl files
 
 
 ; SST PRODUCTS 
 ;       sst_list  = [ 'REMSS-MW' , 'REMSS-MWIR' , 'PSY3V3R1' ]
-        sst_list  = [ 'REMSS-MW' , 'REMSS-MWIR' , 'PSY3V3R1' ]
+        sst_list  = [ 'REMSS-MW' , 'REMSS-MWIR' , 'PSY3V3R1' , 'GLORYS2V1', 'GLORYS2V3' ]
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'FELL2km_COARE_AROME', 'FELL2km_ECUME_AROME' ]
+        par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_ECUME_AROME' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
@@ -81,9 +81,9 @@ FOR i = 0, nb_exp-1 DO BEGIN
     FOR l = 0, n_elements(sst_list)-1 DO BEGIN
       IF sst_list[l] NE '' THEN BEGIN 
         sst_name = sst_list[l]
-;        @plot_max_cooling
+        @plot_max_cooling
       ENDIF
-    ENDFOR
+    ENDFOR; & STOP
   ENDIF
 
   exp_name = exp_list[i]

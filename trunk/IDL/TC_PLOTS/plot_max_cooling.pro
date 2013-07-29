@@ -6,6 +6,8 @@
     IF sst_name EQ 'REMSS-MWIR' THEN BEGIN & sst = ssti_0 & xdim_0 = xdim_ssti & ydim_0 = ydim_ssti & initncdf, file_ssti & ENDIF
     IF sst_name EQ 'REMSS-MW'   THEN BEGIN & sst = sstm_0 & xdim_0 = xdim_sstm & ydim_0 = ydim_sstm & initncdf, file_sstm & ENDIF
     IF sst_name EQ 'PSY3V3R1'   THEN BEGIN & sst = sstp_0 & xdim_0 = xdim_sstp & ydim_0 = ydim_sstp & initncdf, file_sstp & ENDIF
+    IF sst_name EQ 'GLORYS2V1'  THEN BEGIN & sst = sstg1_0 & xdim_0 = xdim_sstg1 & ydim_0 = ydim_sstg1 & initncdf, file_sstg1 & ENDIF        
+    IF sst_name EQ 'GLORYS2V3'  THEN BEGIN & sst = sstg3_0 & xdim_0 = xdim_sstg3 & ydim_0 = ydim_sstg3 & initncdf, file_sstg3 & ENDIF
     domdef, dom_tc
   ENDIF ELSE cmd = execute(' sst =  sst_'+strtrim(i,2))
 
