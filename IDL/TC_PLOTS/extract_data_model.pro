@@ -143,7 +143,7 @@ FOR j = 0, tdim-1 DO BEGIN
     indcoast = where(dist_coast LT 25., cntcoast)
     IF indcoast[0] NE -1 AND cntcoast GT 10 THEN BEGIN
       print, '' & print, exp_list[i], ' dt=', j
-      print, 'coast:', cntcoast, ' bad:', cntbad, ' ok:', cntok & STOP
+      print, 'coast:', cntcoast, ' bad:', cntbad, ' ok:', cntok
       FOR k = 0, nb_var-1 DO BEGIN
 	var = var_list[k]
 	cmd = execute('test = n_elements('+var+'_'+strtrim(i,2)+')')
