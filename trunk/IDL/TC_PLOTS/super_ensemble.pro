@@ -2,8 +2,9 @@ PRO super_ensemble
 @all_cm
 
 
+; PARAMETERS
  exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
- plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_IVAN8/'
+ plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_IVAN_10/'
  tc_list  = [ 'IVAN' , 'GAEL' , 'GELANE' , 'GIOVANNA' , 'FELLENG' ]
 ; tc_year  = [ '2008' , '2009' , '2010'   , '2012'     , '2013'    ]
  nb_tc    = n_elements(tc_list)
@@ -17,6 +18,7 @@ PRO super_ensemble
  FILE_MKDIR, plt_path, /NOEXPAND_PATH
 
 
+; LECTURE DES ERROR FILES
  print, '' & print, 'LECTURE ERROR FILES...' & print, ''
  FOR j = 0, nb_par-1 DO BEGIN
 
@@ -92,9 +94,8 @@ PRO super_ensemble
    print, ''
    FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+par_list[j] ) & print, ''
    
-
  ENDFOR ; nb_par loop
- print, 'LECTURE OK' & print, '' & STOP
+ print, 'LECTURE OK' & print, ''; & STOP
 
 
 
@@ -155,10 +156,10 @@ PRO super_ensemble
 
    ENDFOR
  ENDFOR
- print, 'CALCUL OK' & print, '' & STOP
+ print, 'CALCUL OK' & print, ''; & STOP
 
 
-; TEST SIGNIFICATIVITE
+; TEST SIGNIFICATIVITE (STUDENT T-TEST)
  print, '' & print, 'TESTS SIGNIFICATIVITE...'
  IF nb_par EQ 2 THEN BEGIN
    FOR i = 0, nb_var-1 DO BEGIN
@@ -216,18 +217,22 @@ PRO super_ensemble
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j] )
      cmd = execute( 'std =  std_'+var_list[i]+'_'+par_list[j] )
+     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F3.1)') ELSE min = strtrim(round( min(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F3.1)') ELSE max = strtrim(round( max(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F3.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
      oplot, time, var, color=color_factor*(j+3) MOD 256, thick=thc
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
-     xyouts, 0.120, 0.150-0.020*(j+2), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
+     xyouts, 0.120, 0.150-0.020*(j+1), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
+     xyouts, 0.500, 0.150-0.020*(j+1), 'MIN/AVE/MAX: '+min+'/'+ave+'/'+max+' '+unt_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
    ENDFOR
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.150*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
-   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.180*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
-   xyouts, 0.120, 0.150-0.020, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time-1, minplot-0.150*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time-2, minplot-0.180*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
+   xyouts, 0.120, 0.150-0.020*4, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
    xyouts, time[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
    xyouts, time[0]-6, minplot-0.180*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
    IF write_ps THEN closeps ELSE saveimage, plt_path+plt_name, quality=100
 
- ENDFOR
+ ENDFOR; var loop
 
 
  ; PLOTS "MOYENNE DE TOUS LES MEMBRES"
@@ -257,13 +262,17 @@ PRO super_ensemble
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j]+'_noweight' )
      cmd = execute( 'std =  std_'+var_list[i]+'_'+par_list[j]+'_noweight' )
+     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F3.1)') ELSE min = strtrim(round( min(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F3.1)') ELSE max = strtrim(round( max(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F3.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
      oplot, time, var, color=color_factor*(j+3) MOD 256, thick=thc
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
-     xyouts, 0.120, 0.150-0.020*(j+2), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
+     xyouts, 0.120, 0.150-0.020*(j+1), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
+     xyouts, 0.500, 0.150-0.020*(j+1), 'MIN/AVE/MAX: '+min+'/'+ave+'/'+max+' '+unt_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
    ENDFOR
    IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.150*(maxplot-minplot), strtrim(tmtest_'+var_list[i]+',2), charsize=1.5, charthick=2' )
    IF nb_par EQ 2 THEN cmd = execute( 'xyouts, time, minplot-0.180*(maxplot-minplot), strtrim(    nb_'+var_list[i]+',2), charsize=1.5, charthick=2' )
-   xyouts, 0.120, 0.150-0.020, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
+   xyouts, 0.120, 0.150-0.020*4, 'TC LIST: '+STRJOIN(tc_list,', ', /SINGLE), /normal, charsize=1.5, charthick=2
    xyouts, time[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.5, charthick=2, alignment=1
    xyouts, time[0]-6, minplot-0.180*(maxplot-minplot), 'NB: ', charsize=1.5, charthick=2, alignment=1
    IF write_ps THEN closeps ELSE saveimage, plt_path+plt_name, quality=100
