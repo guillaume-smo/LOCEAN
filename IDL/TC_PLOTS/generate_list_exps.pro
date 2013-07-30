@@ -6,7 +6,7 @@ exp_list = ['BEST-TRACK']
 alt_list = ['IBTRACS/RSMC']
 
 ; ALADIN-ANALYSE
-IF use_ald_oper THEN BEGIN
+IF use_ald_anal THEN BEGIN
   exp_list = [ explist, 'ALADIN-ANA']
   alt_list = [ alt_list, 'ANALYSE-ASSIM']
 ENDIF

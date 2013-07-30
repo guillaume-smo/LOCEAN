@@ -27,7 +27,7 @@ PRO master
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_ECUME_AROME' ]
+        par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_COARE_AROME' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
@@ -76,7 +76,7 @@ FOR i = 0, nb_exp-1 DO BEGIN
   exp_name = exp_list[i]
 
   IF exp_name EQ 'BEST-TRACK' THEN BEGIN
-    @read_ibtracs
+    @read_best_track
     @read_ssts
     FOR l = 0, n_elements(sst_list)-1 DO BEGIN
       IF sst_list[l] NE '' THEN BEGIN 
@@ -107,6 +107,13 @@ ENDFOR
 ;@read_nemo_rst
 print, 'LECTURE OK' & print, ''
 ;STOP
+
+
+; PLOT SCATTER UV10 vs FLUX
+IF restore_extract_data EQ 0 THEN BEGIN
+  @plot_histogram
+  STOP
+ENDIF
 
 
 ; EXTRACTION
@@ -149,11 +156,6 @@ print, 'EXTRACTION OK' & print, ''
 ;ENDFOR
 ;STOP
 
-
-; PLOT SCATTER UV10 vs FLUX
-IF restore_extract_data EQ 0 THEN BEGIN
-  @plot_histogram
-ENDIF
 
 ; PLOT DES TRAJECTOIRES PAR RESEAU POUR VERIFICATION
 @plot_all_tracks
