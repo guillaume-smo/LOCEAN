@@ -22,7 +22,7 @@ PRO master
 
 
 ; SST PRODUCTS 
-        sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1' ]
+        sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
@@ -113,7 +113,7 @@ FOR l = 0, n_elements(sst_list)-1 DO BEGIN
 ENDFOR
 
 
-; PLOT SCATTER UV10 vs FLUX
+; PLOT HISTOGRAM UV10 vs FLUX
 IF PAR_list[0] NE '' AND restore_extract_data EQ 0 THEN BEGIN
   @plot_histogram
 ENDIF
@@ -154,8 +154,9 @@ print, 'EXTRACTION OK' & print, ''
 ; VERIF EXTRACT PLOT
 ;@plot_verif_extract
 
-; PLOT SST LIST 1DTC
+; PLOT SST+OHC LIST 1DTC
 @plot_sst_list
+@plot_ohc_list
 STOP
 
 ; PLOT DES TRAJECTOIRES PAR RESEAU POUR VERIFICATION

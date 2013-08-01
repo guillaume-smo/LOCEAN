@@ -13,11 +13,18 @@ CASE sst_list[k] OF
 	      END
 'GLORYS2V1' : BEGIN
 	      @extract_sst_glorys2v1
+	      cmd = execute('SST'+strtrim(k,2)+'_1DTC_0 = SSTG1_1DTC_0 & help, SST'+strtrim(k,2)+'_1DTC_0')	      
+	      IF tc_name EQ 'IVAN' OR tc_name EQ 'GAEL' THEN BEGIN
+	        @extract_ohc_glorys2v1
+	      ENDIF
 	      cmd = execute('SST'+strtrim(k,2)+'_1DTC_0 = SSTG1_1DTC_0 & help, SST'+strtrim(k,2)+'_1DTC_0')
 	      END		
 'GLORYS2V3' : BEGIN
 	      @extract_sst_glorys2v3
-	      cmd = execute('SST'+strtrim(k,2)+'_1DTC_0 = SSTG3_1DTC_0 & help, SST'+strtrim(k,2)+'_1DTC_0')
+	      cmd = execute('SST'+strtrim(k,2)+'_1DTC_0 = SSTG3_1DTC_0 & help, SST'+strtrim(k,2)+'_1DTC_0')	      
+	      IF tc_name EQ 'IVAN' OR tc_name EQ 'GAEL' THEN BEGIN
+	        @extract_ohc_glorys2v3
+	      ENDIF
 	      END
 'AROME'     : BEGIN
 	      @extract_sst_arome

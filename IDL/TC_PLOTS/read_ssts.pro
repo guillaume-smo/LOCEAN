@@ -10,9 +10,15 @@ CASE sst_list[l] OF
 		END
   'GLORYS2V1' : BEGIN
 		@read_sst_glorys2v1
+		IF tc_name EQ 'IVAN' OR tc_name EQ 'GAEL' THEN BEGIN
+		  @read_ohc_glorys2v1
+		ENDIF
 		END
   'GLORYS2V3' : BEGIN
 		@read_sst_glorys2v3
+		IF tc_name EQ 'IVAN' OR tc_name EQ 'GAEL' THEN BEGIN
+		  @read_ohc_glorys2v3
+		ENDIF
 		END
   'ALADIN'    : BEGIN
 		@read_sst_aladin
