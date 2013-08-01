@@ -22,12 +22,11 @@ PRO master
 
 
 ; SST PRODUCTS 
-;       sst_list  = [ 'REMSS-MW' , 'REMSS-MWIR' , 'PSY3V3R1' ]
-        sst_list  = [ 'REMSS-MW' , 'REMSS-MWIR' , 'PSY3V3R1' , 'GLORYS2V1', 'GLORYS2V3' ]
+        sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1' ]
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_COARE_AROME' ]
+        par_list = [ '' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
@@ -58,6 +57,7 @@ PRO master
         IF n_elements(date_list) EQ 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+tc_name+'/'
 	IF n_elements(par_list) GT 2 AND n_elements(date_list) GT 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'_'+date_list[0]+'-'+date_list[n_elements(date_list)-1]+'/'	
 	IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
+        IF date_list[0] EQ '' AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
 	IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
 
 
@@ -77,16 +77,11 @@ FOR i = 0, nb_exp-1 DO BEGIN
 
   IF exp_name EQ 'BEST-TRACK' THEN BEGIN
     @read_best_track
-    @read_ssts
     FOR l = 0, n_elements(sst_list)-1 DO BEGIN
-      IF sst_list[l] NE '' THEN BEGIN 
-        sst_name = sst_list[l]
-        @plot_max_cooling
-      ENDIF
-    ENDFOR; & STOP
+      @read_ssts
+    ENDFOR
   ENDIF
 
-  exp_name = exp_list[i]
   IF NOT restore_extract_data THEN BEGIN
     IF exp_name EQ 'ECMWF' THEN BEGIN
       @read_ecmwf 
@@ -109,18 +104,29 @@ print, 'LECTURE OK' & print, ''
 ;STOP
 
 
+; PLOT SST COOLING
+FOR l = 0, n_elements(sst_list)-1 DO BEGIN
+  IF sst_list[l] NE '' AND sst_list[l] NE 'AROME' THEN BEGIN 
+    sst_name = sst_list[l]
+    @plot_max_cooling
+  ENDIF
+ENDFOR
+
+
 ; PLOT SCATTER UV10 vs FLUX
-IF restore_extract_data EQ 0 THEN BEGIN
+IF PAR_list[0] NE '' AND restore_extract_data EQ 0 THEN BEGIN
   @plot_histogram
-  STOP
 ENDIF
 
 
 ; EXTRACTION
 FOR i = 0, nb_exp-1 DO BEGIN
+
   exp_name = exp_list[i]
-  print, 'EXTRACTING ', exp_name
+  print, 'EXTRACTION: ', exp_name
+
   IF exp_name NE 'BEST-TRACK' THEN BEGIN
+
     IF restore_extract_data THEN BEGIN
       @restore_extract_data
     ENDIF ELSE BEGIN
@@ -130,32 +136,27 @@ FOR i = 0, nb_exp-1 DO BEGIN
       @extract_data_model
       @save_extract_data
     ENDELSE
+
   ENDIF ELSE BEGIN
+
     ; EXTRACTION SST+BEST-TRACK
-    print, 'EXTRACTION SST+BEST-TRACK' & print, ''
-    @extract_ssts
+    FOR k = 0, n_elements(sst_list)-1 DO BEGIN
+      @extract_ssts
+    ENDFOR
+
   ENDELSE
 ENDFOR ; loop EXP
 ;@extract_sst_nemo_ald
 ;@extract_sst_rst_ald
 print, 'EXTRACTION OK' & print, ''
-;STOP
 
 
 ; VERIF EXTRACT PLOT
-;FOR i = 1, nb_exp-1 DO BEGIN
-;  cmd = execute( 'tdim = tdim_'+strtrim(i,2) )
-;  FOR j = 0, tdim-1 DO BEGIN
-;    cmd = execute( 'computegrid, xaxis=lon_2dtc_'+strtrim(i,2)+'[*,*,j], yaxis=lat_2dtc_'+strtrim(i,2)+'[*,*,j]' )
-;    cmd = execute( 'plt, w10m_sea_2dtc_'+strtrim(i,2)+'[*,*,j], title=date_'+strtrim(i,2)+'[j], win=0' )
-;    cmd = execute( 'oplot, [lon_mslp_'+strtrim(i,2)+'[j],lon_mslp_'+strtrim(i,2)+'[j]], [lat_mslp_'+strtrim(i,2)+'[j],lat_mslp_'+strtrim(i,2)+'[j]], psym=1, color=0, thick=4, symsize=4' )
-;    cmd = execute( 'plt, mslp_sea_2dtc_'+strtrim(i,2)+'[*,*,j], title=date_'+strtrim(i,2)+'[j], win=1' )
-;    cmd = execute( 'oplot, [lon_mslp_'+strtrim(i,2)+'[j],lon_mslp_'+strtrim(i,2)+'[j]], [lat_mslp_'+strtrim(i,2)+'[j],lat_mslp_'+strtrim(i,2)+'[j]], psym=1, color=0, thick=4, symsize=4' )
-;    IF j EQ tdim-1 THEN STOP
-;  ENDFOR
-;ENDFOR
-;STOP
+;@plot_verif_extract
 
+; PLOT SST LIST 1DTC
+@plot_sst_list
+STOP
 
 ; PLOT DES TRAJECTOIRES PAR RESEAU POUR VERIFICATION
 @plot_all_tracks
@@ -175,12 +176,9 @@ print, 'EXTRACTION OK' & print, ''
 @plot_all_errors
 @save_ensemble_error
 @plot_ensemble_error
-SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
-STOP
 
-@plot_model_sst
-STOP
-@plot_sat_sst
+SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
+
 STOP
 
 

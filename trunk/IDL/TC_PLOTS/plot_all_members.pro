@@ -231,7 +231,6 @@ FOR i = 0, nb_par-1 DO BEGIN
 ENDFOR
 
 
-
 ; PLOT 1D SST
 maxplot = !Values.F_NAN & minplot = !Values.F_NAN & var = !Values.F_NAN
 FOR i = 0, nb_exp-1 DO BEGIN

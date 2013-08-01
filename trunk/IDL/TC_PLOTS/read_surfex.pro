@@ -7,8 +7,9 @@ idate = (idate + 1) MOD n_elements(date_list)
 ; SURFEX
 fic_name = 'AROMOUT_00H-??H_6h.nc'
 exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
+print, 'SEARCH FILE: '+exp_path+'EXPS_'+STRMID(exp_name, 0, 7)+'/EXP_'+exp_name+'_'+date_list[idate]+'/'+fic_name+'...'
 cmd = execute('file_'+strtrim(i,2)+' = FILE_SEARCH(exp_path+"EXPS_"+STRMID(exp_name, 0, 7)+"/EXP_"+exp_name+"_"+date_list[idate]+"/"+fic_name)')
-cmd = execute('print, file_'+strtrim(i,2))
+cmd = execute('IF file_'+strtrim(i,2)+' EQ "" THEN STOP ELSE print, "FILE FOUND: "+file_'+strtrim(i,2))
 ;cmd = execute('file_'+strtrim(i,2)+' = exp_path+"EXPS_"+STRMID(exp_name, 0, 7)+"/EXP_"+exp_name+"_"+date_list[idate]+"/"+fic_name & print, file_'+strtrim(i,2))
 cmd = execute('initncdf, file_'+strtrim(i,2))
 domdef, dom_tc
