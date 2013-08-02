@@ -18,15 +18,15 @@ PRO master
 	degrad_aladin = 0
         use_ald_anal  = 0    ; rajoute les analyses  aladin
         use_ald_oper  = 0    ; rajoute les forecasts aladin
-	restore_extract_data = 0 ; read model data already extracted from idl files
-
+	restore_extract_data = 1 ; read model data already extracted from idl files
+        read_data     = 1 
 
 ; SST PRODUCTS 
         sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ '' ]
+        par_list = [ 'IVAN2km_COARE_CPL', 'IVAN2km_COAGLO2V3_CPL' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
@@ -82,7 +82,7 @@ FOR i = 0, nb_exp-1 DO BEGIN
     ENDFOR
   ENDIF
 
-  IF NOT restore_extract_data THEN BEGIN
+  IF read_data THEN BEGIN
     IF exp_name EQ 'ECMWF' THEN BEGIN
       @read_ecmwf 
     ENDIF
@@ -101,20 +101,18 @@ FOR i = 0, nb_exp-1 DO BEGIN
 ENDFOR
 ;@read_nemo_rst
 print, 'LECTURE OK' & print, ''
-;STOP
 
 
-; PLOT SST COOLING
+; PLOT SST-LIST COOLING
 FOR l = 0, n_elements(sst_list)-1 DO BEGIN
   IF sst_list[l] NE '' AND sst_list[l] NE 'AROME' THEN BEGIN 
     sst_name = sst_list[l]
-    @plot_max_cooling
+    @plot_cooling_sstlist
   ENDIF
 ENDFOR
 
-
 ; PLOT HISTOGRAM UV10 vs FLUX
-IF PAR_list[0] NE '' AND restore_extract_data EQ 0 THEN BEGIN
+IF par_list[0] NE '' AND read_data THEN BEGIN
   @plot_histogram
 ENDIF
 
@@ -148,16 +146,28 @@ FOR i = 0, nb_exp-1 DO BEGIN
 ENDFOR ; loop EXP
 ;@extract_sst_nemo_ald
 ;@extract_sst_rst_ald
+; VERIF EXTRACT PLOT
+;@plot_verif_extract
 print, 'EXTRACTION OK' & print, ''
 
 
-; VERIF EXTRACT PLOT
-;@plot_verif_extract
 
-; PLOT SST+OHC LIST 1DTC
+; PLOT CPL EXP COOLING
+IF read_data THEN BEGIN
+  FOR i = 0, nb_exp-1 DO BEGIN
+    IF strmatch(exp_list[i], '*CPL*') EQ 1 THEN BEGIN
+      exp_name = exp_list[i]
+      @plot_cooling_cpl
+    ENDIF
+  ENDFOR
+ENDIF
+STOP
+
+
+; PLOT SST+OHC LIST ALONG BEST-TRACK (1DTC)
 @plot_sst_list
 @plot_ohc_list
-STOP
+;STOP
 
 ; PLOT DES TRAJECTOIRES PAR RESEAU POUR VERIFICATION
 @plot_all_tracks

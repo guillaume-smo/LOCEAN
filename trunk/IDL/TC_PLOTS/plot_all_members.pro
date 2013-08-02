@@ -232,18 +232,11 @@ ENDFOR
 
 
 ; PLOT 1D SST
-maxplot = !Values.F_NAN & minplot = !Values.F_NAN & var = !Values.F_NAN
-FOR i = 0, nb_exp-1 DO BEGIN
-  IF i EQ 0 AND sst_list[0] NE '' THEN BEGIN
-    FOR j = 0, n_elements(sst_list)-1 DO BEGIN
-      cmd = execute('maxplot=max([maxplot,SST'+strtrim(j,2)+'_1DTC_0-273.15],/nan)')
-      cmd = execute('minplot=min([minplot,SST'+strtrim(j,2)+'_1DTC_0-273.15],/nan)')
-    ENDFOR
-  ENDIF ELSE BEGIN
-    cmd = execute('var = SST_1DTC_'+strtrim(i,2)+'[*]-273.15')
-    maxplot=max([maxplot,var],/nan)
-    minplot=min([minplot,var],/nan)
-  ENDELSE
+maxplot = max(SST0_1DTC_0-273.15, /NAN) & minplot = min(SST0_1DTC_0-273.15, /NAN)
+FOR i = 1, nb_exp-1 DO BEGIN
+  cmd = execute('var = SST_1DTC_'+strtrim(i,2)+'[*]-273.15')
+  maxplot=max([maxplot,var],/nan)
+  minplot=min([minplot,var],/nan)
 ENDFOR
 maxplot = maxplot + 0.05*(maxplot-minplot)
 minplot = minplot - 0.05*(maxplot-minplot)
@@ -253,19 +246,10 @@ IF write_ps THEN openps, filename=plt_path+'ALL_SST_1DTC'
 IF sst_list[0] NE '' THEN time = juld_0 + 0.50d ELSE time = juld_1 + 0.50d
 IF sst_list[0] NE '' THEN var = SST0_1DTC_0-273.15 ELSE var = SST_1DTC_1-273.15
 jpt = n_elements(time)
-pltt, var, 't', minplot, maxplot, xminor=4, title='TC SST', subtitle='', ytitle='SST (degC)', thick=thc, charsize=1.5, charthick=2
-
-IF sst_list[0] NE '' THEN BEGIN & l = 0
-  FOR i = 0, n_elements(sst_list)-1 DO BEGIN
-    cmd = execute('pltt, SST'+strtrim(i,2)+'_1DTC_0-273.15, "t", color=color_factor*i MOD 256, thick=thc, /ov1D')
-    cmd = execute('oplot, [0,time[0]], [0,SST'+strtrim(i,2)+'_1DTC_0[0]-273.15], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256')
-    xyouts, 0.125, 0.180-0.020*i, sst_list[i], /normal, charsize=1, charthick=2, color=color_factor*i
-    l = l+1
-  ENDFOR
-ENDIF
+pltt, var, 't', minplot, maxplot, xminor=4, title='TC SST', subtitle='', ytitle='SST (degC)', charsize=1.5, charthick=2, thick=thc
 
 FOR i = 1, nb_exp-1 DO BEGIN
-  icol=l+i-1
+  icol=i
   cmd = execute('var = SST_1DTC_'+strtrim(i,2)+'[*]-273.15')
   cmd = execute('juld = juld_'+strtrim(i,2))
   jpt = n_elements(juld) & time = juld + 0.50d
@@ -280,6 +264,7 @@ FOR i = 1, nb_exp-1 DO BEGIN
   ENDELSE
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_SST_1DTC.gif', quality=100
+
 
 FOR i = 0, nb_par-1 DO BEGIN
   IF write_ps THEN openps, filename=plt_path+'ALL_SST_'+par_list[i]
