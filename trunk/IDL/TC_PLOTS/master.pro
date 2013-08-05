@@ -19,14 +19,14 @@ PRO master
         use_ald_anal  = 0    ; rajoute les analyses  aladin
         use_ald_oper  = 0    ; rajoute les forecasts aladin
 	restore_extract_data = 1 ; read model data already extracted from idl files
-        read_data     = 1 
+        read_data     = 0    ; lecture des fichiers netcdf 
 
 ; SST PRODUCTS 
         sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'IVAN2km_COARE_CPL', 'IVAN2km_COAGLO2V3_CPL' ]
+        par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_ECUGLO2V3_CPL' ]
 
 
 ; LISTE RESEAUX FORECAST ALADIN+AROME
