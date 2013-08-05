@@ -1,0 +1,12 @@
+#PBS -N GETFT
+#PBS -q ft
+#PBS -l cpunum_job=1
+#PBS -l cputim_job=00:01:00
+#PBS -j o
+#PBS -m abe
+#PBS -M guillaume.samson@meteo.fr
+
+set -x
+
+for i in $(seq 0 6 96); do ff=$(printf %02d $((10#$i))); echo $ff; ftget /home/m/mrgf/samson/xp/9BGK/COUGIPATH/coupling/ELSCFALAD_reunion+00$ff LOCAPATH/ELSCFALAD_reunion+00$ff; done
+ftget /home/m/mrgf/samson/xp/9BGK/COUGIPATH/coupling/AROMOUT_SURF.ivan.0000.lfi LOCAPATH/AROMOUT_SURF.ivan.0000.lfi

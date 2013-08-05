@@ -1,0 +1,21 @@
+#PBS -N POST_LFI
+#PBS -S /usr/local/bin/bash
+#PBS -T mpisx
+#PBS -q vector
+#PBS -b 1
+#PBS -j o
+#PBS -m abe
+#PBS -M guillaume.samson@meteo.fr
+#PBS -v NPT=1
+#PBS -l cpunum_job=${NPT}
+#PBS -l cputim_job=01:00:00
+#PBS -l elapstim_req=00:15:00
+#PBS -l memsz_job=50gb
+
+set -x
+
+for f in OUTPATH/AROMOUT*.lfi; do
+  echo $f
+  /work/samson/TEST_CPL/FICDIR/lfi2netcdf.sh $f
+done
+
