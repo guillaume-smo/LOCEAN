@@ -1,0 +1,1 @@
+-h 0 -p NPA -e _autowrap_ ./atmosx -mMODEL -vVERSION -eFCST -cNCONF -tTSTEP -fNSTOP -aADVEC

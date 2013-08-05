@@ -1,0 +1,3 @@
+-h 0 -p NPC -e _autowrap_ ./oasis3
+-h 0 -p NPA -e _autowrap_ ./atmosx -mMODEL -vVERSION -eFCST -cNCONF -tTSTEP -fNSTOP -aADVEC
+-h 0 -p NPO -e _autowrap_ ./oceanx
