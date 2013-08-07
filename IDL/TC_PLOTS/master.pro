@@ -8,57 +8,58 @@ PRO master
 
 
 ; PARAMETERS
-        tc_name       =  'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
-        @def_dates_obs
-	radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
-        res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
-	dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
-        force_rsmc    = 1    ; force to read rmsc best-track (even if present in ibtracs)
-	degrad_surfex = 0    ; DEGRADATION RESOLUTION MODELES (0 ou 1)
-	degrad_aladin = 0
-        use_ald_anal  = 0    ; rajoute les analyses  aladin
-        use_ald_oper  = 0    ; rajoute les forecasts aladin
-	restore_extract_data = 1 ; read model data already extracted from idl files
-        read_data     = 0    ; lecture des fichiers netcdf 
+      tc_name       =  'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
+      radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
+      res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
+      dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
+      force_rsmc    = 1    ; force to read rmsc best-track (even if present in ibtracs)
+      degrad_surfex = 0    ; DEGRADATION RESOLUTION MODELES (0 ou 1)
+      degrad_aladin = 0
+      use_ald_anal  = 0    ; rajoute les analyses  aladin
+      use_ald_oper  = 0    ; rajoute les forecasts aladin
+      read_data     = 0    ; lecture des fichiers netcdf 
+      restore_extract_data = 1 ; read model data already extracted from idl files
+
 
 ; SST PRODUCTS 
-        sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
+      sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-        par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_ECUGLO2V3_CPL' ]
+      par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_COAGLO2V3_CPL' ]
 
 
-; LISTE RESEAUX FORECAST ALADIN+AROME
+; LISTE VARIABLES A EXTRAIRE
+      ; variables obligatoires (ne pas modifier)
+      var_list = [ 'SST','W10M_SEA','ZON10M_SEA','MER10M_SEA','MSLP_SEA','SST' ]
+      unt_list = [ 'm/s','m/s','m/s','hPa','K' ]
+      ; variables additionnelles	
+      sup_list = [ 'LE_SEA','H_SEA','HLE_SEA','FM_SEA','CH_SEA','CE_SEA','CD_SEA' ]
+      usp_list = [ 'W/m2','W/m2','W/m2','kg/ms2','W/s','W/s/K','W/s2' ]
+
+; LISTE COMPLETE DES VARIABLES + UNITES
+      ;var_list = ['SST','FMT_SEA','W10M_SEA','ZON10M_SEA','MER10M_SEA','LE_SEA','H_SEA','T2M_SEA', $
+      ;            'Q2M_SEA','HU2M_SEA','RN_SEA','LWD_SEA','LWU_SEA','SWD_SEA','SWU_SEA']
+      ;unt_list = ['K','N/m2','m/s','m/s','m/s','W/m2','W/m2','K','g/kg','%','W/m2','W/m2','W/m2','W/m2','W/m2']
+
+
+; DEFINITION DES LISTES DE DATES, RESEAUX & EXPERIENCES
+        @def_dates_obs
         @def_reseaux_exps
         @generate_list_exps
 
 
-; LISTE VARIABLES A EXTRAIRE
-        ; variables obligatoires (ne pas modifier)
-        var_list = [ 'SST','W10M_SEA','ZON10M_SEA','MER10M_SEA','MSLP_SEA','SST' ]
-	unt_list = [ 'm/s','m/s','m/s','hPa','K' ]
-        ; variables additionnelles	
-	sup_list = [ 'LE_SEA','H_SEA','HLE_SEA','FM_SEA','CH_SEA','CE_SEA','CD_SEA' ]
-	usp_list = [ 'W/m2','W/m2','W/m2','kg/ms2','W/s','W/s/K','W/s2' ]
-
-; LISTE COMPLETE DES VARIABLES + UNITES
-	;var_list = ['SST','FMT_SEA','W10M_SEA','ZON10M_SEA','MER10M_SEA','LE_SEA','H_SEA','T2M_SEA', $
-	;            'Q2M_SEA','HU2M_SEA','RN_SEA','LWD_SEA','LWU_SEA','SWD_SEA','SWU_SEA']
-	;unt_list = ['K','N/m2','m/s','m/s','m/s','W/m2','W/m2','K','g/kg','%','W/m2','W/m2','W/m2','W/m2','W/m2']
-
-
 ; SETUP FIGURES
-        write_ps = 1 ; ecriture fichier postscript
-	dom_plt = dom_tc & plt_path = ''
-	IF n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+par_list[0]+'_vs_'+par_list[1]+'/'
-	IF n_elements(par_list) EQ 1 AND par_list[0] NE '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'/'
-        IF n_elements(par_list) EQ 1 AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
-        IF n_elements(date_list) EQ 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+tc_name+'/'
-	IF n_elements(par_list) GT 2 AND n_elements(date_list) GT 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'_'+date_list[0]+'-'+date_list[n_elements(date_list)-1]+'/'	
-	IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
-        IF date_list[0] EQ '' AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
-	IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
+      write_ps = 1 ; ecriture fichier postscript / gif
+      dom_plt = dom_tc & plt_path = ''
+      IF n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+par_list[0]+'_vs_'+par_list[1]+'/'
+      IF n_elements(par_list) EQ 1 AND par_list[0] NE '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'/'
+      IF n_elements(par_list) EQ 1 AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
+      IF n_elements(date_list) EQ 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+tc_name+'/'
+      IF n_elements(par_list) GT 2 AND n_elements(date_list) GT 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'_'+date_list[0]+'-'+date_list[n_elements(date_list)-1]+'/'	
+      IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
+      IF date_list[0] EQ '' AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
+      IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
 
 
 ;------------------------------------------------------------------------------------------------------------------
@@ -82,6 +83,7 @@ FOR i = 0, nb_exp-1 DO BEGIN
     ENDFOR
   ENDIF
 
+  IF restore_extract_data EQ 0 THEN read_data = 1
   IF read_data THEN BEGIN
     IF exp_name EQ 'ECMWF' THEN BEGIN
       @read_ecmwf 
