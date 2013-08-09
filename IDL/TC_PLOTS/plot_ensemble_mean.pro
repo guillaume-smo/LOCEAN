@@ -5,7 +5,7 @@ color_factor = 70
 key_portrait = 1
 ;write_ps = 0
 IF write_ps THEN thc = 6 ELSE thc = 2
-
+color_offset = 3
 
 
 ; PLOT 1D VENT MAX
@@ -28,10 +28,11 @@ xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('var = ave_max_w10m_aro'+strtrim(i,2)+'[*]')
   cmd = execute('std = std_max_w10m_aro'+strtrim(i,2)+'[*]')
-  pltt, var, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-;  oplot, [0,time[0]], [0,time[0]], psym=1, thick=2, symsize=2, color=color_factor*(i+1) MOD 256
-  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
-  errplot, time, var-std, var+std, color=color_factor*(i+1) MOD 256
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+;  oplot, [0,time[0]], [0,time[0]], psym=1, thick=2, symsize=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MAXW10M.gif', quality=100
 
@@ -59,9 +60,10 @@ xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('var = ave_max_w10m_radtc_aro'+strtrim(i,2)+'[*]')
   cmd = execute('std = std_max_w10m_radtc_aro'+strtrim(i,2)+'[*]')
-  pltt, var, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
-  errplot, time, var-std, var+std, color=color_factor*(i+1) MOD 256
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_radtc_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MAXW10M_RADTC.gif', quality=100
 
@@ -89,9 +91,10 @@ xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('var = ave_min_mslp_aro'+strtrim(i,2)+'[*]')
   cmd = execute('std = std_min_mslp_aro'+strtrim(i,2)+'[*]')
-  pltt, var, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
-  errplot, time, var-std, var+std, color=color_factor*(i+1) MOD 256
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(min_mslp_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MINMSLP.gif', quality=100
 
@@ -119,9 +122,10 @@ xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('var = ave_RVM_1DTC_aro'+strtrim(i,2)+'[*]')
   cmd = execute('std = std_RVM_1DTC_aro'+strtrim(i,2)+'[*]')
-  pltt, var, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
-  errplot, time, var-std, var+std, color=color_factor*(i+1) MOD 256
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(RVM_1DTC_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_RVM.gif', quality=100
 
@@ -143,9 +147,10 @@ xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charth
 FOR i = 0, n_elements(par_list)-1 DO BEGIN
   cmd = execute('var = ave_SST_1DTC_aro'+strtrim(i,2)+'[*]-273.15')
   cmd = execute('std = std_SST_1DTC_aro'+strtrim(i,2)+'[*]')  
-  pltt, var, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
-  errplot, time, var-std, var+std, color=color_factor*(i+1) MOD 256
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(ssti_1Dtc_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_SST_1DTC.gif', quality=100
 
@@ -175,9 +180,9 @@ FOR j = 0, n_elements(sup_list)-1 DO BEGIN
   FOR i = 0, nb_par-1 DO BEGIN
     cmd = execute('varplot = ave_'+var+'_1DTC_aro'+strtrim(i,2)+'[*]')
     cmd = execute('stdplot = std_'+var+'_1DTC_aro'+strtrim(i,2)+'[*]')
-    pltt, varplot, 't', color=color_factor*(i+1) MOD 256, thick=thc, /ov1D
-    xyouts, 0.125, 0.200-0.025*(1+i), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(1+i) MOD 256
-    errplot, time, varplot-stdplot, varplot+stdplot, color=color_factor*(i+1) MOD 256
+    pltt, varplot, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+    xyouts, 0.125, 0.200-0.025*(1+i), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+    errplot, time, varplot-stdplot, varplot+stdplot, color=color_factor*(i+color_offset) MOD 256
   ENDFOR
   IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_'+var+'_1DTC.gif', quality=100
 
@@ -197,10 +202,10 @@ xyouts, 0.100, 0.125-0.025*0, exp_list[0], /normal, charsize=1.5, charthick=2, c
 xyouts, 0.350, 0.125-0.025*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
 FOR i = 0, nb_par-1 DO BEGIN
-  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', psym=1, color=color_factor*(i+1) MOD 256, thick=1, symsize=1')
-  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+'[indbold], ave_lat_mslp_aro'+strtrim(i,2)+'[indbold], psym=1, color=color_factor*(i+1) MOD 256, thick=thc, symsize=2')
-  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', linestyle=0, color=color_factor*(i+1) MOD 256, thick=thc')
-  xyouts, 0.100, 0.125-0.025*(1+i), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+1) MOD 256
+  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', psym=1, color=color_factor*(i+color_offset) MOD 256, thick=1, symsize=1')
+  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+'[indbold], ave_lat_mslp_aro'+strtrim(i,2)+'[indbold], psym=1, color=color_factor*(i+color_offset) MOD 256, thick=thc, symsize=2')
+  cmd = execute('oplot, ave_lon_mslp_aro'+strtrim(i,2)+', ave_lat_mslp_aro'+strtrim(i,2)+', linestyle=0, color=color_factor*(i+color_offset) MOD 256, thick=thc')
+  xyouts, 0.100, 0.125-0.025*(1+i), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 ;xyouts, 0.125, 0.200-0.020*1, 'ALADIN-OPER', /normal, charsize=1.5, charthick=2, color=color_factor*1
 ;xyouts, 0.125, 0.200-0.020*2, 'AROME-ALL'  , /normal, charsize=1.5, charthick=2, color=color_factor*2

@@ -34,9 +34,8 @@ IF write_ps THEN thc = 6 ELSE thc = 2
 ; plot
   initncdf, file & domdef, dom_tc
   IF write_ps THEN openps, filename=plt_path+'MAX_COOLING_'+exp_name+'_'+date_list[(i-1) MOD nb_date] & print, plt_path+'MAX_COOLING_'+exp_name+'_'+date_list[(i-1) MOD nb_date]
-  minplot = min(maxcool, /NAN)
   title = exp_name + ' MAX COOLING '+strtrim(long(date[0]*100),2)+' - '+strtrim(long(date[tdim-1]*100),2)
-  plt, MAXCOOL, minplot, -1*minplot, lct=64, /nocont, /realcont, subtitle="", title=title, charsize=1.5, charthick=2
+  plt, MAXCOOL, minplot_cool, -1*minplot_cool, lct=64, /nocont, /realcont, subtitle="", title=title, charsize=1.5, charthick=2
   indok = (listmatch(date,date_0))[*,0]
   indbold = (listmatch(date[indok],round(date[indok])))[*,0]
   oplot, lon[indok],lat[indok], psym=1, color=0, thick=thc/2, symsize=1

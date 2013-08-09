@@ -8,7 +8,7 @@ PRO master
 
 
 ; PARAMETERS
-      tc_name       =  'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
+      tc_name       = 'GAEL' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
       radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
       res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
       dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
@@ -17,16 +17,16 @@ PRO master
       degrad_aladin = 0
       use_ald_anal  = 0    ; rajoute les analyses  aladin
       use_ald_oper  = 0    ; rajoute les forecasts aladin
-      read_data     = 0    ; lecture des fichiers netcdf 
-      restore_extract_data = 1 ; read model data already extracted from idl files
+      read_data     = 1    ; lecture des fichiers netcdf 
+      restore_extract_data = 0 ; read model data already extracted from idl files
 
 
 ; SST PRODUCTS 
-      sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1']
+      sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1', 'GLO2V3ALAD', 'GLO2V1ALAD']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-      par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_COAGLO2V3_CPL' ]
+      par_list = [ 'GAEL2km_ECUME_AROME', 'GAEL2km_ECUGLO2V3_CPL' ]
 
 
 ; LISTE VARIABLES A EXTRAIRE
@@ -105,20 +105,6 @@ ENDFOR
 print, 'LECTURE OK' & print, ''
 
 
-; PLOT SST-LIST COOLING
-FOR l = 0, n_elements(sst_list)-1 DO BEGIN
-  IF sst_list[l] NE '' AND sst_list[l] NE 'AROME' THEN BEGIN 
-    sst_name = sst_list[l]
-    @plot_cooling_sstlist
-  ENDIF
-ENDFOR
-
-; PLOT HISTOGRAM UV10 vs FLUX
-IF par_list[0] NE '' AND read_data THEN BEGIN
-  @plot_histogram
-ENDIF
-
-
 ; EXTRACTION
 FOR i = 0, nb_exp-1 DO BEGIN
 
@@ -154,6 +140,21 @@ print, 'EXTRACTION OK' & print, ''
 
 
 
+; PLOT HISTOGRAM UV10 vs FLUX
+IF par_list[0] NE '' AND read_data THEN BEGIN
+  @plot_histogram
+ENDIF
+
+
+; PLOT SST-LIST COOLING
+@plot_cooling_sstlist
+
+
+; PLOT SST+OHC LIST ALONG BEST-TRACK (1DTC)
+@plot_sst_list
+@plot_ohc_list
+
+
 ; PLOT CPL EXP COOLING
 IF read_data THEN BEGIN
   FOR i = 0, nb_exp-1 DO BEGIN
@@ -163,13 +164,8 @@ IF read_data THEN BEGIN
     ENDIF
   ENDFOR
 ENDIF
-STOP
-
-
-; PLOT SST+OHC LIST ALONG BEST-TRACK (1DTC)
-@plot_sst_list
-@plot_ohc_list
 ;STOP
+
 
 ; PLOT DES TRAJECTOIRES PAR RESEAU POUR VERIFICATION
 @plot_all_tracks
@@ -182,7 +178,6 @@ STOP
 ; PLOT DE LA MOYENNE D'ENSEMBLE
 @calcul_ensemble_mean
 @plot_ensemble_mean
-;STOP
 
 ; PLOT ERREURS DE PREVISION D'ENSEMBLE
 @calcul_ensemble_error
@@ -190,8 +185,9 @@ STOP
 @save_ensemble_error
 @plot_ensemble_error
 
-SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
-
+;SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
+SPAWN, 'for f in '+plt_path+'*.ps; do ps2epsi $f ${f%.*}.eps; done'
+SPAWN, 'rm -f '+plt_path+'*.ps'
 STOP
 
 
