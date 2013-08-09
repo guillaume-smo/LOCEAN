@@ -1,4 +1,4 @@
-; calcul des erreurs de distance, vent et pression par experience
+; calcul des erreurs par experience
 
 err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst' ]
 nb_err   = n_elements(err_list)
@@ -83,7 +83,7 @@ IF ind_arom[0] NE -1 THEN BEGIN
   FOR i = 0, nb_par-1 DO cmd = execute( 'nb_maxexp = max([nb_maxexp, nb_aro'+strtrim(i,2)+'], /nan)' )
   FOR i = 0, nb_err-1 DO cmd = execute( 'all_'+err_list[i]+' = FLTARR( nb_par, maxnbt_arom, nb_maxexp) + !VALUES.F_NAN' )
 
-  ; calcul erreur moyenne par critere
+  ; calcul erreur moyenne + standard deviation par critere
   FOR m = 0, nb_par-1 DO BEGIN
     cmd = execute(' nb_aro =  nb_aro'+strtrim(m,2))
     cmd = execute('ind_aro = ind_aro'+strtrim(m,2))
@@ -94,8 +94,8 @@ IF ind_arom[0] NE -1 THEN BEGIN
         cmd = execute( 'tmp[j,*] = '+var+'_'+strtrim(ind_aro[j],2) )
         cmd = execute( 'all_'+var+'[m,*,'+strtrim(j,2)+'] = '+var+'_'+strtrim(ind_aro[j],2) )
       ENDFOR
-      cmd = execute( var+'_aro'+strtrim(m,2)+' = mean(tmp, DIM=1, /NAN)')
-      cmd = execute( 'help, '+var+'_aro'+strtrim(m,2) )
+      cmd = execute( 'tmp = moment(tmp, DIM=1, /NAN, maxmoment=2, mean='+var+'_aro'+strtrim(m,2)+', sdev=std_'+var+'_aro'+strtrim(m,2)+')')
+      cmd = execute( 'help, '+var+'_aro'+strtrim(m,2)+', std_'+var+'_aro'+strtrim(m,2) )
     ENDFOR
   ENDFOR
 

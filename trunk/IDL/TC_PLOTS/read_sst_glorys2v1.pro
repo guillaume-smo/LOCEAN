@@ -2,7 +2,7 @@ print, '' & print, 'READING SST GLORYS2V1 FILE...'
 
 
 exp_path = '/home/gsamson/WORK/DATA/SST_GLORYS2V1_'+tc_name+'/'
-file_sstg1 = FILE_SEARCH(exp_path + "SST_GLORYS2V1_1dAV_*-*_gridT.nc") & print, file_sstg1
+file_sstg1 = FILE_SEARCH(exp_path + 'SST_GLORYS2V1_1dAV_*-*_gridT.nc') & print, file_sstg1
 file_sstg1 = file_sstg1[n_elements(file_sstg1)-1]
 initncdf, file_sstg1 & domdef, dom_tc
 print, 'RES:', max(e1t, /nan)/1000.
