@@ -1,4 +1,4 @@
-print, '' & print, 'READING SURFEX FILES...'
+print, '' & print, 'READING SURFEX FILE...'
 
 
 IF i EQ 1 THEN idate = -1
@@ -27,7 +27,6 @@ juldini_sfx = date2jul(dateini_sfx)
 cmd = execute('juld_'+strtrim(i,2)+' = juldini_sfx + dindgen(jpt)/4.')
 cmd = execute('date_'+strtrim(i,2)+' = jul2date(juld_'+strtrim(i,2)+', hour=hour, day=day, month=month, year=year)')
 ibeg = 0
-iend = jpt-1
 cmd = execute('iend = where(date_'+strtrim(i,2)+' EQ date_end_obs)')
 IF iend EQ -1 THEN iend = jpt-1
 cmd = execute('date_'+strtrim(i,2)+' = date_'+strtrim(i,2)+'[ibeg:iend]')

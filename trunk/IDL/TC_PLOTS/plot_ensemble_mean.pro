@@ -21,7 +21,7 @@ minplot = minplot - 0.05*(maxplot-minplot)
 IF write_ps THEN openps, filename=plt_path+'MEAN_MAXW10M'
 jpt = n_elements(juld_0) & time = juld_0 + 0.50d
 pltt, max_w10m_0, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: MAX 10M-WIND', subtitle='', $
-ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2
+ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
 xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
 xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
@@ -31,7 +31,8 @@ FOR i = 0, nb_par-1 DO BEGIN
   pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
 ;  oplot, [0,time[0]], [0,time[0]], psym=1, thick=2, symsize=2, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
-  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(max_w10m_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
   errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MAXW10M.gif', quality=100
@@ -53,7 +54,7 @@ minplot = minplot - 0.05*(maxplot-minplot)
 IF write_ps THEN openps, filename=plt_path+'MEAN_MAXW10M_RADTC'
 jpt = n_elements(juld_0) & time = juld_0 + 0.50d
 pltt, max_w10m_radtc_0, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: MAX 10M-WIND', subtitle='', $
-ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2
+ytitle='10M-WIND (m/s)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
 xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
 xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
@@ -62,7 +63,8 @@ FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('std = std_max_w10m_radtc_aro'+strtrim(i,2)+'[*]')
   pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
   xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
-  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_radtc_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(max_w10m_radtc_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(max_w10m_radtc_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
   errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MAXW10M_RADTC.gif', quality=100
@@ -84,7 +86,7 @@ minplot = minplot - 0.05*(maxplot-minplot)
 IF write_ps THEN openps, filename=plt_path+'MEAN_MINMSLP'
 jpt = n_elements(juld_0) & time = juld_0 + 0.50d
 pltt, min_mslp_0, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: MIN MSLP', subtitle='', $
-ytitle='MSLP (hPa)', thick=thc, charsize=1.5, charthick=2
+ytitle='MSLP (hPa)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
 xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
 xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
@@ -93,7 +95,8 @@ FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('std = std_min_mslp_aro'+strtrim(i,2)+'[*]')
   pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
   xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
-  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(min_mslp_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(min_mslp_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(min_mslp_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
   errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_MINMSLP.gif', quality=100
@@ -115,7 +118,7 @@ minplot = minplot - 0.05*(maxplot-minplot)
 IF write_ps THEN openps, filename=plt_path+'MEAN_RVM'
 jpt = n_elements(juld_0) & time = juld_0 + 0.50d
 pltt, RVM_1DTC_0, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: RMW', subtitle='', $
-ytitle='RADIUS (km)', thick=thc, charsize=1.5, charthick=2
+ytitle='RADIUS (km)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
 xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
 xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
@@ -124,7 +127,8 @@ FOR i = 0, nb_par-1 DO BEGIN
   cmd = execute('std = std_RVM_1DTC_aro'+strtrim(i,2)+'[*]')
   pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
   xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
-  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(RVM_1DTC_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(RVM_1DTC_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(RVM_1DTC_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
   errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_RVM.gif', quality=100
@@ -132,15 +136,22 @@ IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_RVM.gif', quality=100
 
 
 ; PLOT SST 
-maxplot = max([ssti_1Dtc_0,sst_1Dtc_1,ave_sst_1DTC_alad,ave_sst_1DTC_arom], /nan)-273.15
-minplot = min([ssti_1Dtc_0,sst_1Dtc_1,ave_sst_1DTC_alad,ave_sst_1DTC_arom], /nan)-273.15
+maxdate=max(date_0,/nan)
+mindate=min(date_0,/nan)
+FOR i = 0, nb_par-1 DO BEGIN
+  cmd = execute('var = ave_SST_1DTC_aro'+strtrim(i,2)+'[*]-273.15')
+  cmd = execute('std = std_SST_1DTC_aro'+strtrim(i,2)+'[*]')
+  IF i EQ 0 THEN maxplot=max([SST0_1DTC_0-273.15,var+std],/nan) ELSE maxplot=max([maxplot,var+std],/nan)
+  IF i EQ 0 THEN minplot=min([SST0_1DTC_0-273.15,var-std],/nan) ELSE minplot=min([minplot,var-std],/nan)
+ENDFOR
 maxplot = maxplot + 0.05*(maxplot-minplot)
 minplot = minplot - 0.05*(maxplot-minplot)
 
+
 IF write_ps THEN openps, filename=plt_path+'MEAN_SST_1DTC'
 jpt = n_elements(juld_0) & time = juld_0 + 0.50d
-pltt, ssti_1Dtc_0-273.15, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: TC SST', subtitle='', $
-ytitle='SST (degC)', thick=thc, charsize=1.5, charthick=2
+pltt, sst0_1Dtc_0-273.15, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: TC SST', subtitle='', $
+ytitle='SST (degC)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
 xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
 xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
 
@@ -149,7 +160,8 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   cmd = execute('std = std_SST_1DTC_aro'+strtrim(i,2)+'[*]')  
   pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
   xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
-  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(ssti_1Dtc_0, var)*100)/100., format='(F4.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(sst0_1Dtc_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(sst0_1Dtc_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
   errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
 ENDFOR
 IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_SST_1DTC.gif', quality=100
@@ -166,8 +178,9 @@ FOR j = 0, n_elements(sup_list)-1 DO BEGIN
   cmd = execute('minplot = min([ave_'+var+'_1DTC_alad, ave_'+var+'_1DTC_arom], /nan)')
   FOR i = 0, nb_par-1 DO BEGIN
     cmd = execute('varplot = ave_'+var+'_1DTC_aro'+strtrim(i,2)+'[*]')
-    maxplot=max([maxplot,varplot],/nan)
-    minplot=min([minplot,varplot],/nan)
+    cmd = execute('stdplot = std_'+var+'_1DTC_aro'+strtrim(i,2)+'[*]')    
+    maxplot=max([maxplot,varplot+stdplot],/nan)
+    minplot=min([minplot,varplot-stdplot],/nan)
   ENDFOR
   maxplot = maxplot + 0.05*(maxplot-minplot)
   minplot = minplot - 0.05*(maxplot-minplot)
@@ -175,7 +188,7 @@ FOR j = 0, n_elements(sup_list)-1 DO BEGIN
   IF write_ps THEN openps, filename=plt_path+'MEAN_'+var+'_1DTC'
   jpt = n_elements(juld_0) & time = juld_0 + 0.50d
   cmd = execute('pltt, ave_'+var+'_1DTC_alad, "t", minplot, maxplot, xminor=4, title="ENSEMBLE MEAN: '+var $ 
-  +'", subtitle="", ytitle="'+var+' ('+unt+')", thick=thc, charsize=1.5, charthick=2')
+  +'", subtitle="", ytitle="'+var+' ('+unt+')", thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1')
 
   FOR i = 0, nb_par-1 DO BEGIN
     cmd = execute('varplot = ave_'+var+'_1DTC_aro'+strtrim(i,2)+'[*]')

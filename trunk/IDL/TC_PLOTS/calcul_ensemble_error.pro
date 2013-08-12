@@ -34,7 +34,7 @@ FOR i = 1, nb_exp-1 DO BEGIN
   cmd = execute('errwrad_'+strtrim(i,2)+'[indok] = MAX_W10M_RADTC_'+strtrim(i,2)+'[indok]-max_w10m_0[indok_obs] & help, errwrad_'+strtrim(i,2))
   cmd = execute('errmslp_'+strtrim(i,2)+'[indok] = min_mslp_'+strtrim(i,2)+'[indok]-min_mslp_0[indok_obs] & help, errmslp_'+strtrim(i,2))
   cmd = execute('err_rmw_'+strtrim(i,2)+'[indok] = rvm_1dtc_'+strtrim(i,2)+'[indok]-rvm_1dtc_0[indok_obs] & help, err_rmw_'+strtrim(i,2))
-  cmd = execute('err_sst_'+strtrim(i,2)+'[indok] = sst_1dtc_'+strtrim(i,2)+'[indok]-sstm_1dtc_0[indok_obs] & help, err_sst_'+strtrim(i,2))
+  cmd = execute('err_sst_'+strtrim(i,2)+'[indok] = sst_1dtc_'+strtrim(i,2)+'[indok]-sst0_1dtc_0[indok_obs] & help, err_sst_'+strtrim(i,2))
 
 ENDFOR
 
@@ -119,7 +119,7 @@ ENDIF
 
 
 ; STATISTICAL SIGNIFICANCE ENTRE 2 CRITERES
-IF nb_par EQ 2 AND nb_date GE 5 THEN BEGIN
+IF nb_par EQ 2 AND nb_date GE 4 THEN BEGIN
 
   ; declarations
   FOR i = 0, nb_err-1 DO cmd = execute( 'tmtest_'+err_list[i]+'_arom = FLTARR(maxnbt_arom) + !VALUES.F_NAN' )
