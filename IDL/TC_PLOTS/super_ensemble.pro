@@ -4,11 +4,11 @@ PRO super_ensemble
 
 ; PARAMETERS
  exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
- plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_IVAN_10/'
- tc_list  = [ 'IVAN' , 'GAEL' , 'GELANE' , 'GIOVANNA' , 'FELLENG' ]
+ plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_ECUME_vs_ECUGLO2V3_3TCs_2x19/'
+ tc_list  = [ 'IVAN' , 'GAEL' , 'GIOVANNA' ]
 ; tc_year  = [ '2008' , '2009' , '2010'   , '2012'     , '2013'    ]
  nb_tc    = n_elements(tc_list)
- par_list = [ '2km_ECUME_AROME' , '2km_COARE_AROME' ]
+ par_list = [ '2km_ECUME_AROME' , '2km_ECUGLO2V3_CPL' ]
  nb_par   = n_elements(par_list)
  var_list = [ 'errdist' , 'errwind' , 'errwrad' , 'errmslp' , 'err_rmw' , 'err_sst' ]
  unt_list = [ '(km)', '(m/s)' , '(m/s)' , '(hPa)' , '(km)' , '(K)' ]
@@ -74,8 +74,10 @@ PRO super_ensemble
 
 
    ; ERREUR DE TOUS LES MEMBRES (RESEAUX) PAR CRITERE
-   print, ''   
-   file_list = FILE_SEARCH(exp_path+'EXPS_*'+STRMID(par_list[j],0,3)+'/*'+par_list[j]+'*/ERRORS_TC.idl')
+   print, ''
+   file_list = ''
+   FOR k = 0, nb_tc-1 DO file_list = [ file_list, FILE_SEARCH(exp_path+'EXPS_'+STRMID(tc_list[k],0,4)+STRMID(par_list[j],0,3)+'/*'+par_list[j]+'*/ERRORS_TC.idl') ]
+   file_list = file_list[1: n_elements(file_list)-1]
    nb_file   = n_elements(file_list)
    FOR k = 0, nb_var -1 DO cmd = execute( 'ALL_'+var_list[k]+'_'+par_list[j]+' = FLTARR(nb_file,nb_ech) + !VALUES.F_NAN' )
    FOR k = 0, nb_file-1 DO BEGIN    
@@ -95,7 +97,7 @@ PRO super_ensemble
    FOR k = 0, nb_var-1 DO cmd = execute( 'help, ALL_'+var_list[k]+'_'+par_list[j] ) & print, ''
    
  ENDFOR ; nb_par loop
- print, 'LECTURE OK' & print, ''; & STOP
+ print, 'LECTURE OK' & print, '' & STOP
 
 
 
@@ -156,7 +158,7 @@ PRO super_ensemble
 
    ENDFOR
  ENDFOR
- print, 'CALCUL OK' & print, ''; & STOP
+ print, 'CALCUL OK' & print, '' & STOP
 
 
 ; TEST SIGNIFICATIVITE (STUDENT T-TEST)
@@ -196,8 +198,8 @@ PRO super_ensemble
    cmd = execute( 'maxplot = max(mean_'+var_list[i]+'_'+par_list[0]+' + std_'+var_list[i]+'_'+par_list[0]+',/nan)' )
    cmd = execute( 'minplot = min(mean_'+var_list[i]+'_'+par_list[0]+' - std_'+var_list[i]+'_'+par_list[0]+',/nan)' )
    FOR j = 1, n_elements(par_list)-1 DO BEGIN
-     cmd = execute( 'varmax = mean_'+var_list[i]+'_'+par_list[j]+' + std_'+var_list[i]+'_'+par_list[0] )
-     cmd = execute( 'varmin = mean_'+var_list[i]+'_'+par_list[j]+' - std_'+var_list[i]+'_'+par_list[0] )
+     cmd = execute( 'varmax = mean_'+var_list[i]+'_'+par_list[j]+' + std_'+var_list[i]+'_'+par_list[j] )
+     cmd = execute( 'varmin = mean_'+var_list[i]+'_'+par_list[j]+' - std_'+var_list[i]+'_'+par_list[j] )
      maxplot=max([maxplot,varmax],/nan)
      minplot=min([minplot,varmin],/nan)
    ENDFOR
@@ -217,9 +219,9 @@ PRO super_ensemble
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j] )
      cmd = execute( 'std =  std_'+var_list[i]+'_'+par_list[j] )
-     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F3.1)') ELSE min = strtrim(round( min(var,/nan)),2)
-     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F3.1)') ELSE max = strtrim(round( max(var,/nan)),2)
-     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F3.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F4.1)') ELSE min = strtrim(round( min(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F4.1)') ELSE max = strtrim(round( max(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F4.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
      oplot, time, var, color=color_factor*(j+3) MOD 256, thick=thc
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
      xyouts, 0.120, 0.150-0.020*(j+1), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
@@ -262,9 +264,9 @@ PRO super_ensemble
    FOR j = 0, n_elements(par_list)-1 DO BEGIN
      cmd = execute( 'var = mean_'+var_list[i]+'_'+par_list[j]+'_noweight' )
      cmd = execute( 'std =  std_'+var_list[i]+'_'+par_list[j]+'_noweight' )
-     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F3.1)') ELSE min = strtrim(round( min(var,/nan)),2)
-     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F3.1)') ELSE max = strtrim(round( max(var,/nan)),2)
-     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F3.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN min = string( min(var,/nan), format='(F4.1)') ELSE min = strtrim(round( min(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN max = string( max(var,/nan), format='(F4.1)') ELSE max = strtrim(round( max(var,/nan)),2)
+     IF var_list[i] EQ 'err_sst' THEN ave = string(mean(abs(var),/nan), format='(F4.1)') ELSE ave = strtrim(round(mean(abs(var),/nan)),2)
      oplot, time, var, color=color_factor*(j+3) MOD 256, thick=thc
      errplot, time, var-std, var+std, color=color_factor*(j+3) MOD 256, thick=1
      xyouts, 0.120, 0.150-0.020*(j+1), par_list[j], /normal, charsize=1.5, charthick=2, color=color_factor*(j+3) MOD 256
@@ -278,7 +280,8 @@ PRO super_ensemble
    IF write_ps THEN closeps ELSE saveimage, plt_path+plt_name, quality=100
 
  ENDFOR
- SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
+ SPAWN, 'for f in '+plt_path+'*.ps; do ps2epsi $f ${f%.*}.eps; done'
+ SPAWN, 'rm -f '+plt_path+'*.ps'
  print, 'PLOTS OK' & print, ''
 
  print, 'SUPER_ENSEMBLE OK'

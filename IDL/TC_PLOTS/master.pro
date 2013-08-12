@@ -1,14 +1,12 @@
 PRO master
-; programme d'analyse et de plot de simulations "cyclone"
+; programme d'analyse et de plot d'ensemble de simulations "cyclone"
 ; necessite SAXO (LOCEAN)
 @all_cm
 
 
 ;------------------------------------------------------------------------------------------------------------------
-
-
 ; PARAMETERS
-      tc_name       = 'GAEL' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
+      tc_name       = 'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
       radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
       res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
       dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
@@ -17,16 +15,16 @@ PRO master
       degrad_aladin = 0
       use_ald_anal  = 0    ; rajoute les analyses  aladin
       use_ald_oper  = 0    ; rajoute les forecasts aladin
-      read_data     = 1    ; lecture des fichiers netcdf 
-      restore_extract_data = 0 ; read model data already extracted from idl files
+      read_data     = 0    ; lecture des fichiers netcdf 
+      restore_extract_data = 1 ; read model data already extracted from idl files
 
 
-; SST PRODUCTS 
-      sst_list  = ['REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3', 'GLORYS2V1', 'GLO2V3ALAD', 'GLO2V1ALAD']
+; SST PRODUCTS (ATTENTION: LE PREMIER DE LA LISTE SERT DE REFERENCE "OBS")
+      sst_list  = [ 'REMSS-MW', 'REMSS-MWIR', 'PSY3V3R1', 'ALADIN', 'GLORYS2V3'];, 'GLORYS2V1' ];, 'GLO2V3ALAD', 'GLO2V1ALAD']
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-      par_list = [ 'GAEL2km_ECUME_AROME', 'GAEL2km_ECUGLO2V3_CPL' ]
+      par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_ECUGLO2V3_CPL' ]
 
 
 ; LISTE VARIABLES A EXTRAIRE
@@ -60,12 +58,12 @@ PRO master
       IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
       IF date_list[0] EQ '' AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
       IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
-
-
 ;------------------------------------------------------------------------------------------------------------------
 
 
+;------------------------------------------------------------------------------------------------------------------
 ; READ VARIABLES
+;------------------------------------------------------------------------------------------------------------------
 var_list = [ var_list, sup_list ]
 unt_list = [ unt_list, usp_list ]
 nb_exp = n_elements(exp_list) & help, nb_exp
@@ -85,27 +83,36 @@ FOR i = 0, nb_exp-1 DO BEGIN
 
   IF restore_extract_data EQ 0 THEN read_data = 1
   IF read_data THEN BEGIN
+
     IF exp_name EQ 'ECMWF' THEN BEGIN
       @read_ecmwf 
     ENDIF
+
     IF exp_name EQ 'ALADIN-ANA' THEN BEGIN
       @read_aladin_ana
     ENDIF
+
     IF exp_name EQ 'ALADIN-OPER' THEN BEGIN
       @read_aladin_oper 
     ENDIF
+
     IF STRMID(exp_name,4,3) EQ '2km' OR STRMID(exp_name,4,3) EQ '4km' THEN BEGIN
       @read_surfex
-  ;    @read_nemo
+      IF strmatch(exp_name, '*CPL*') THEN BEGIN
+        @read_nemo_cpl
+       ;@read_nemo_rst
+      ENDIF
     ENDIF
+
   ENDIF
-
 ENDFOR
-;@read_nemo_rst
-print, 'LECTURE OK' & print, ''
+print, 'LECTURE OK' & print, ''; & STOP
+;------------------------------------------------------------------------------------------------------------------
 
 
+;------------------------------------------------------------------------------------------------------------------
 ; EXTRACTION
+;------------------------------------------------------------------------------------------------------------------
 FOR i = 0, nb_exp-1 DO BEGIN
 
   exp_name = exp_list[i]
@@ -120,12 +127,18 @@ FOR i = 0, nb_exp-1 DO BEGIN
       @init_arrays
       ; TRACKING+EXTRACTION CYCLONE
       @extract_data_model
-      @save_extract_data
+      IF strmatch(exp_name, '*CPL*') THEN BEGIN
+        var_name = 'ohc'
+        @extract_nemo_cpl
+	var_name = 'dept26'
+        @extract_nemo_cpl
+      ENDIF
+      @save_extract_data  
     ENDELSE
 
   ENDIF ELSE BEGIN
 
-    ; EXTRACTION SST+BEST-TRACK
+    ; EXTRACTION SST_LIST+BEST-TRACK
     FOR k = 0, n_elements(sst_list)-1 DO BEGIN
       @extract_ssts
     ENDFOR
@@ -136,10 +149,11 @@ ENDFOR ; loop EXP
 ;@extract_sst_rst_ald
 ; VERIF EXTRACT PLOT
 ;@plot_verif_extract
-print, 'EXTRACTION OK' & print, ''
+print, 'EXTRACTION OK' & print, ''; & STOP
+;------------------------------------------------------------------------------------------------------------------
 
 
-
+;------------------------------------------------------------------------------------------------------------------
 ; PLOT HISTOGRAM UV10 vs FLUX
 IF par_list[0] NE '' AND read_data THEN BEGIN
   @plot_histogram
@@ -199,6 +213,7 @@ STOP
 ; PLOT 1D "MSLP vs WIND"
 @plot_wind_mslp
 STOP
+;------------------------------------------------------------------------------------------------------------------
 
 
 END

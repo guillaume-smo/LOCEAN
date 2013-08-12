@@ -28,12 +28,14 @@ CASE sst_list[k] OF
 	      ENDIF
 	      END
 'GLO2V1ALAD': BEGIN
-	      IF tc_name EQ 'IVAN' OR tc_name EQ 'GAEL' THEN BEGIN
+	      IF tc_name EQ 'IVAN' THEN BEGIN ;OR tc_name EQ 'GAEL' THEN BEGIN
 	        @extract_sst_glo2v1alad
 	      ENDIF
 	      END		
 'GLO2V3ALAD': BEGIN
-	      @extract_sst_glo2v3alad
+	      IF tc_name EQ 'IVAN' THEN BEGIN
+	        @extract_sst_glo2v3alad
+	      ENDIF
 	      END
 'AROME'     : BEGIN
 	      @extract_sst_arome

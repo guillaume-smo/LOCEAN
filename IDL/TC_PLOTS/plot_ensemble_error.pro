@@ -46,7 +46,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errdist_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errdist_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.180*(maxplot-minplot), strtrim(nb_errdist_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
@@ -86,7 +86,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwind_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwind_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errwind_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
@@ -126,7 +126,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwrad_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errwrad_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errwrad_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
@@ -166,7 +166,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256  
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' hPa', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errmslp_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errmslp_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errmslp_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
@@ -206,7 +206,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' km', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_rmw_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_rmw_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_err_rmw_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
@@ -247,7 +247,7 @@ FOR i = 0, n_elements(par_list)-1 DO BEGIN
   errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
   xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
   xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' K', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
-  IF nb_par EQ 2 AND nb_date GE 5 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_sst_arom,2), charsize=1.25, charthick=2 $
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_err_sst_arom,2), charsize=1.25, charthick=2 $
   ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
   xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_err_sst_arom,2), charsize=1.25, charthick=2
   xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
