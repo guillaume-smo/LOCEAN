@@ -1,9 +1,6 @@
 print, '' & print, 'READING NEMO CPL FILE...'
 
 
-IF i EQ 1 THEN idate = -1
-idate = (idate + 1) MOD n_elements(date_list)
-
 fic_name = 'IVAN12_gridT_00H-96H_6h.nc'
 exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
 print, 'SEARCH FILE: '+exp_path+'EXPS_'+STRMID(exp_name, 0, 7)+'/EXP_'+exp_name+'_'+date_list[idate]+'/'+fic_name+'...'

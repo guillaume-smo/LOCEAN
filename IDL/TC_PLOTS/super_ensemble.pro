@@ -4,11 +4,10 @@ PRO super_ensemble
 
 ; PARAMETERS
  exp_path = '/home/gsamson/WORK/AROME/TEST_CPL/'
- plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_ECUME_vs_ECUGLO2V3_3TCs_2x19/'
- tc_list  = [ 'IVAN' , 'GAEL' , 'GIOVANNA' ]
-; tc_year  = [ '2008' , '2009' , '2010'   , '2012'     , '2013'    ]
+ plt_path = '/home/gsamson/WORK/IDL/FIGURES/SUPER_ENSEMBLE_COARE_vs_COAGLO2V3_4TCs_2x23/'
+ tc_list  = [ 'IVAN' , 'GAEL' , 'GELANE' , 'GIOVANNA' ]
  nb_tc    = n_elements(tc_list)
- par_list = [ '2km_ECUME_AROME' , '2km_ECUGLO2V3_CPL' ]
+ par_list = [ '2km_COARE_AROME' , '2km_COAGLO2V3_CPL' ]
  nb_par   = n_elements(par_list)
  var_list = [ 'errdist' , 'errwind' , 'errwrad' , 'errmslp' , 'err_rmw' , 'err_sst' ]
  unt_list = [ '(km)', '(m/s)' , '(m/s)' , '(hPa)' , '(km)' , '(K)' ]

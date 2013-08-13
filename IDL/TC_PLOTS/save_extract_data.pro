@@ -7,7 +7,7 @@ save_path = '/home/gsamson/WORK/AROME/TEST_CPL/EXPS_'+STRMID(exp_name, 0, 7)+'/E
 expid     = strtrim(i,2)
 
 
-save_list = [ 'file', 'date', 'juld', 'xdim', 'ydim', 'lon', 'lat', 'tdim', 'lon_maxwnd', 'lat_maxwnd', 'max_w10m', 'min_mslp', 'lon_mslp', 'lat_mslp', 'RVM_1DTC', 'MAX_W10M_RADTC' ]
+save_list = [ 'file', 'date', 'juld', 'xdim', 'ydim', 'lon', 'lat', 'tdim', 'lon_maxwnd', 'lat_maxwnd', 'max_w10m', 'min_mslp', 'lon_mslp', 'lat_mslp', 'RVM_1DTC', 'MAX_W10M_RADTC', 'vdep' ]
 FOR k = 0, n_elements(save_list)-1 DO cmd = execute( save_list[k]+'='+save_list[k]+'_'+expid )
 save_file = 'DATA_TC_R'+STRTRIM(ROUND(radius),2)+'km.idl'
 cmd = execute( 'SAVE, '+STRJOIN(save_list,', ', /SINGLE)+', FILENAME="'+save_path+save_file+'", /VERBOSE')

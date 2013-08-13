@@ -3,7 +3,9 @@ print, '' & print, 'CALCUL MOYENNE ENSEMBLE PAR DATE...'
 
 
 ; liste des variables et des experiences
-cal_list = [ 'max_w10m', 'MAX_W10M_RADTC', 'min_mslp', 'RVM_1DTC', 'lon_mslp', 'lat_mslp', 'SST_1DTC' ]
+cal_list = [ 'max_w10m', 'MAX_W10M_RADTC', 'min_mslp', 'RVM_1DTC', 'lon_mslp', 'lat_mslp', 'SST_1DTC', 'vdep' ]
+
+
 FOR i = 0, n_elements(sup_list)-1 DO cal_list = [ cal_list, sup_list[i]+'_1DTC' ]
 nb_cal   = n_elements(cal_list)
 ind_alad = where(exp_list EQ 'ALADIN-OPER', nb_alad) & help, nb_alad

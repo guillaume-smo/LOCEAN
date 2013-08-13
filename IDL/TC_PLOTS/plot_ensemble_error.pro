@@ -217,6 +217,47 @@ IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_RMW_1DTC.gif', qu
 
 
 
+; ERREURS VDEP
+maxplot = max([errvdep_alad,errvdep_arom],/nan)
+minplot = min([errvdep_alad,errvdep_arom],/nan)
+FOR i = 0, n_elements(par_list)-1 DO BEGIN
+  cmd = execute('var = errvdep_aro'+strtrim(i,2)+'[*]')
+  cmd = execute('std = std_errvdep_aro'+strtrim(i,2)+'[*]')
+  maxplot=max([maxplot,var+std],/nan)
+  minplot=min([minplot,var-std],/nan)
+ENDFOR
+maxplot = maxplot + 0.05*(maxplot-minplot)
+minplot = minplot - 0.05*(maxplot-minplot)
+
+IF write_ps THEN openps, filename=plt_path+'MEAN_ERRVDEP_1DTC'
+splot, time_alad, errvdep_alad, XTICKINTERVAL=12, xminor=2, yrange=[minplot,maxplot], xrange=[0,96], title='ENSEMBLE MEAN ERROR: VDEP', xtitle='FORECAST TIME (hours)', thick=1, win=0, ytitle='VDEP ERROR (m/s)', xgridstyle=2, xticklen=1, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
+IF finite(errvdep_alad[0]) EQ 1 THEN oplot, time_alad, errvdep_alad, color=color_factor*1, thick=thc
+IF finite(errvdep_alad[0]) EQ 1 THEN xyouts, 0.125, 0.200-0.020*0, 'ALADIN', /normal, charsize=1, charthick=2, color=1*color_factor MOD 256
+;IF finite(errvdep_arom[0]) EQ 1 THEN oplot, time_arom, errvdep_arom, color=color_factor*2, thick=thc
+;IF finite(errvdep_arom[0]) EQ 1 THEN xyouts, 0.125, 0.200-0.020*1, 'AROME', /normal, charsize=1, charthick=2, color=2*color_factor MOD 256
+
+FOR i = 0, n_elements(par_list)-1 DO BEGIN
+  cmd = execute('var = errvdep_aro'+strtrim(i,2))
+  cmd = execute('std = std_errvdep_aro'+strtrim(i,2)+'[*]')
+  min = strtrim(round( min(var,/nan)),2)
+  max = strtrim(round( max(var,/nan)),2)
+  ave = strtrim(round(mean(abs(var),/nan)),2)
+  oplot, time_arom, var, color=(i+color_offset)*color_factor MOD 256, thick=thc
+  oplot, time_arom, var*0., thick=thc, linestyle=0, color=0  
+  errplot, time_arom, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
+  xyouts, 0.075, 0.125-0.020*i, par_list[i], /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
+  xyouts, 0.525, 0.125-0.020*i, 'MIN/AVE/MAX ERROR: '+min+'/'+ave+'/'+max+' m/s', /normal, charsize=1.25, charthick=2, color=(i+color_offset)*color_factor MOD 256
+  IF nb_par EQ 2 AND nb_date GE 4 THEN xyouts, time_arom, minplot-0.150*(maxplot-minplot), strtrim(tmtest_errvdep_arom,2), charsize=1.25, charthick=2 $
+  ELSE xyouts, time_arom[0], minplot-0.150*(maxplot-minplot), 'SIGNIFICANCE TEST NOT POSSIBLE', charsize=1.25, charthick=2
+  xyouts, time_arom, minplot-0.175*(maxplot-minplot), strtrim(nb_errvdep_arom,2), charsize=1.25, charthick=2
+  xyouts, time_arom[0]-6, minplot-0.150*(maxplot-minplot), 'SIG: ', charsize=1.25, charthick=2, alignment=1
+  xyouts, time_arom[0]-6, minplot-0.180*(maxplot-minplot), 'NB: ', charsize=1.25, charthick=2, alignment=1
+ENDFOR
+oplot, time_arom, errvdep_arom*0., thick=1, linestyle=2
+IF write_ps THEN closeps ELSE saveimage, plt_path+''+'MEAN_ERR_VDEP_1DTC.gif', quality=100
+
+
+
 ; ERREURS SST
 maxplot = max([err_sst_alad,err_sst_arom],/nan)
 minplot = min([err_sst_alad,err_sst_arom],/nan)

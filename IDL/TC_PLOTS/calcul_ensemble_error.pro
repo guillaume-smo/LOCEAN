@@ -1,6 +1,6 @@
 ; calcul des erreurs par experience
 
-err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst' ]
+err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst', 'errvdep' ]
 nb_err   = n_elements(err_list)
 
 
@@ -35,6 +35,7 @@ FOR i = 1, nb_exp-1 DO BEGIN
   cmd = execute('errmslp_'+strtrim(i,2)+'[indok] = min_mslp_'+strtrim(i,2)+'[indok]-min_mslp_0[indok_obs] & help, errmslp_'+strtrim(i,2))
   cmd = execute('err_rmw_'+strtrim(i,2)+'[indok] = rvm_1dtc_'+strtrim(i,2)+'[indok]-rvm_1dtc_0[indok_obs] & help, err_rmw_'+strtrim(i,2))
   cmd = execute('err_sst_'+strtrim(i,2)+'[indok] = sst_1dtc_'+strtrim(i,2)+'[indok]-sst0_1dtc_0[indok_obs] & help, err_sst_'+strtrim(i,2))
+  cmd = execute('errvdep_'+strtrim(i,2)+'[indok] = vdep_'+strtrim(i,2)+'[indok]-vdep_0[indok_obs] & help, errvdep_'+strtrim(i,2))  
 
 ENDFOR
 
@@ -53,6 +54,7 @@ ENDFOR
 
 ; calcul erreurs ALADIN
 IF ind_alad[0] NE -1 THEN BEGIN
+
   FOR i = 0, maxnbt_alad-1 DO BEGIN
     FOR j = 0, nb_alad-1 DO BEGIN
       cmd = execute(' tmp = n_elements(errdist_'+strtrim(ind_alad[j],2)+')')
@@ -63,6 +65,7 @@ IF ind_alad[0] NE -1 THEN BEGIN
 	IF j EQ 0 THEN cmd = execute('tmp3 = errmslp_'+strtrim(ind_alad[j],2)+'[i]') ELSE cmd = execute('tmp3 = [tmp3,errmslp_'+strtrim(ind_alad[j],2)+'[i]]')
 	IF j EQ 0 THEN cmd = execute('tmp5 = err_rmw_'+strtrim(ind_alad[j],2)+'[i]') ELSE cmd = execute('tmp5 = [tmp5,err_rmw_'+strtrim(ind_alad[j],2)+'[i]]')
 	IF j EQ 0 THEN cmd = execute('tmp6 = err_sst_'+strtrim(ind_alad[j],2)+'[i]') ELSE cmd = execute('tmp6 = [tmp6,err_sst_'+strtrim(ind_alad[j],2)+'[i]]')
+	IF j EQ 0 THEN cmd = execute('tmp7 = errvdep_'+strtrim(ind_alad[j],2)+'[i]') ELSE cmd = execute('tmp7 = [tmp7,errvdep_'+strtrim(ind_alad[j],2)+'[i]]')	
       ENDIF
     ENDFOR
     errdist_alad[i]  = mean(tmp1,/nan); & undefine, tmp1
@@ -71,6 +74,7 @@ IF ind_alad[0] NE -1 THEN BEGIN
     errmslp_alad[i]  = mean(tmp3,/nan); & undefine, tmp3
     err_rmw_alad[i]  = mean(tmp5,/nan); & undefine, tmp5
     err_sst_alad[i]  = mean(tmp6,/nan); & undefine, tmp6
+    errvdep_alad[i]  = mean(tmp7,/nan); & undefine, tmp6    
   ENDFOR
 ENDIF
 

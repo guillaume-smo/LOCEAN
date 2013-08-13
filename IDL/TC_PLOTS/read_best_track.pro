@@ -1,6 +1,7 @@
 print, '' & print, 'READ '+tc_name+' BEST-TRACK...'
 
 
+;------------------------------------------------------------------------------------------------------------------
 ; IBTRACS parameters
 ibtracs_wmo = '/home/gsamson/WORK/DATA/IBTRACS/v03r04-WMO/'
 date_ini    = 18581117.00d
@@ -56,8 +57,11 @@ IF ind_wmo NE -1 AND force_rsmc EQ 0 THEN BEGIN
     ; DIMENSIONS
     cmd = execute('tdim_'+strtrim(i,2)+' = n_elements(mslp_wmo[ibeg:iend]) & help, tdim_'+strtrim(i,2))
   ENDIF ELSE STOP
+;------------------------------------------------------------------------------------------------------------------
 
 ENDIF ELSE BEGIN
+
+;------------------------------------------------------------------------------------------------------------------
    print, '' & print, 'WARNING: TC '+tc_name+' not read in IBTRACS database -> use RSMC data'
 ;   tmp = READ_ASCII('/home/gsamson/WORK/DATA/CYCPREVI_CYCLADE/'+STRUPCASE(tc_name)+'.txt', DATA_START=4)
 ;   tmp = TRANSPOSE(tmp.FIELD01) & help, tmp
@@ -85,12 +89,29 @@ ENDIF ELSE BEGIN
    cmd = execute('juld_'+strtrim(i,2)+' = date2jul(date_'+strtrim(i,2)+')')
    cmd = execute('tdim_'+strtrim(i,2)+' = n_elements(min_mslp_'+strtrim(i,2)+') & help, tdim_'+strtrim(i,2))
 ENDELSE
+;------------------------------------------------------------------------------------------------------------------
 
+
+;------------------------------------------------------------------------------------------------------------------
 ; RVM CYCPREVI
 ;tmp = READ_ASCII('/home/gsamson/WORK/DATA/CYCPREVI_CYCLADE/'+STRUPCASE(tc_name)+'.txt', DATA_START=4)
 ;tmp = TRANSPOSE(tmp.FIELD01)
 tmp = float(tmp)
 tmp[where(tmp EQ 9999.00)] = !VALUES.F_NAN
 RVM_1DTC_0 = avg(tmp[ibeg:iend,18:21],1, /NAN) ; moyenne des 4 cadrants
+;------------------------------------------------------------------------------------------------------------------
+
+
+;------------------------------------------------------------------------------------------------------------------
+; VITESSE DEPLACEMENT
+cmd = execute( 'tdim = tdim_'+strtrim(i,2) )
+cmd = execute( 'lon_mslp = lon_mslp_'+strtrim(i,2) )
+cmd = execute( 'lat_mslp = lat_mslp_'+strtrim(i,2) )
+cmd = execute( 'vdep_'+strtrim(i,2)+' = FLTARR(tdim)' )
+cmd = execute( 'vdep_'+strtrim(i,2)+'[0] = map_2points(lon_mslp[0],lat_mslp[0],lon_mslp[1],lat_mslp[1], /meters)/(6.*60.*60.)' )
+FOR j = 1, tdim-2 DO cmd = execute( 'vdep_'+strtrim(i,2)+'[j] = ( map_2points(lon_mslp[j-1],lat_mslp[j-1],lon_mslp[j],lat_mslp[j], /meters)/(6.*60.*60.) + map_2points(lon_mslp[j],lat_mslp[j],lon_mslp[j+1],lat_mslp[j+1], /meters)/(6.*60.*60.) ) / 2.' )
+cmd = execute( 'vdep_'+strtrim(i,2)+'[tdim-1] = map_2points(lon_mslp[tdim-2],lat_mslp[tdim-2],lon_mslp[tdim-1],lat_mslp[tdim-1], /meters)/(6.*60.*60.)' )
+;------------------------------------------------------------------------------------------------------------------
+
 
 print, 'READ '+tc_name+' BEST-TRACK OK' & print, ''
