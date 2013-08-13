@@ -291,4 +291,35 @@ FOR i = 0, nb_par-1 DO BEGIN
   IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_SST_'+par_list[i]+'.gif', quality=100
 ENDFOR
 
+
+; PLOT 1D VDEP
+FOR i = 0, nb_exp-1 DO BEGIN
+  cmd = execute('var = vdep_'+strtrim(i,2)+'[*]')
+  IF i EQ 0 THEN maxplot=max(var,/nan) ELSE maxplot=max([maxplot,var],/nan)
+  IF i EQ 0 THEN minplot=min(var,/nan) ELSE minplot=min([minplot,var],/nan)
+ENDFOR
+maxplot = maxplot + 0.05*(maxplot-minplot)
+minplot = minplot - 0.05*(maxplot-minplot)
+help, minplot, maxplot
+
+IF write_ps THEN openps, filename=plt_path+'ALL_VDEP_1DTC'
+FOR i = 0, nb_exp-1 DO BEGIN
+  cmd = execute('var  = vdep_'+strtrim(i,2)+'[*]')
+  cmd = execute('juld = juld_'+strtrim(i,2))
+  jpt = n_elements(juld) & time = juld + 0.50d
+  IF i EQ 0 THEN pltt, var, 't', minplot, maxplot, xminor=4, title='TC TRANSLATION SPEED', subtitle='', ytitle='VDEP (m/s)', thick=thc, charsize=1.5, charthick=2
+;  IF exp_list[i] EQ 'BEST-TRACK' OR exp_list[i] EQ 'ALADIN-ANA' THEN thc=2 ELSE thc=2
+  pltt, var, 't', color=color_factor*i MOD 256, thick=thc, /ov1D
+  oplot, [0,time[0]], [0,var[0]], psym=1, thick=thc, symsize=2, color=color_factor*i MOD 256
+  IF i LE 8 THEN BEGIN
+    xyouts, 0.125, 0.180-0.020*i, exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.400, 0.180-0.020*i, '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+  ENDIF ELSE BEGIN
+    xyouts, 0.525, 0.180-0.020*(i-8), exp_list[i], /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+    xyouts, 0.800, 0.180-0.020*(i-8), '('+alt_list[i]+')', /normal, charsize=1, charthick=2, color=color_factor*i MOD 256
+  ENDELSE
+ENDFOR
+IF write_ps THEN closeps ELSE saveimage, plt_path+'ALL_VDEP_1DTC.gif', quality=100
+
+
 print, 'PLOT ALL OK' & print, ''

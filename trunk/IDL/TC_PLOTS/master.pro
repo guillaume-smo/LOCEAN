@@ -1,12 +1,12 @@
 PRO master
 ; programme d'analyse et de plot d'ensemble de simulations "cyclone"
-; necessite SAXO (LOCEAN)
+; necessite SAXO (LOCEAN) + IDL 8.x
 @all_cm
 
 
 ;------------------------------------------------------------------------------------------------------------------
 ; PARAMETERS
-      tc_name       = 'IVAN' ; 'IVAN' ; 'GAEL' ; 'FELLENG' ; 'GIOVANNA' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'BINGIZA' (!NOT WORKING!)
+      tc_name       = 'IVAN' ; 'IVAN' ; 'GAEL' ; 'GELANE' (!BAD FORECAST @ 20100216H06!) ; 'GIOVANNA' ; 'FELLENG' ; 'BINGIZA' (!NOT WORKING!)
       radius        = 150. ; RAYON POUR MOYENNE AUTOUR DU CYCLONE (km)
       res_rad       = 10.  ; resolution radiale des moyennes azimuthales (km)
       dom_tc        = [45.50,68.00,-21.70,-9.20] ; definition domaine data
@@ -15,8 +15,8 @@ PRO master
       degrad_aladin = 0
       use_ald_anal  = 0    ; rajoute les analyses  aladin
       use_ald_oper  = 0    ; rajoute les forecasts aladin
-      read_data     = 0    ; lecture des fichiers netcdf 
-      restore_extract_data = 1 ; read model data already extracted from idl files
+      read_data     = 1    ; lecture des fichiers netcdf 
+      restore_extract_data = 0 ; read model data already extracted from idl files
 
 
 ; SST PRODUCTS (ATTENTION: LE PREMIER DE LA LISTE SERT DE REFERENCE "OBS")
@@ -24,7 +24,7 @@ PRO master
 
 
 ; CRITERES MOYENNE D'ENSEMBLE
-      par_list = [ 'IVAN2km_ECUME_AROME', 'IVAN2km_ECUGLO2V3_CPL' ]
+      par_list = [ 'IVAN2km_COARE_AROME', 'IVAN2km_COAGLO2V3_CPL' ]
 
 
 ; LISTE VARIABLES A EXTRAIRE
@@ -42,22 +42,14 @@ PRO master
 
 
 ; DEFINITION DES LISTES DE DATES, RESEAUX & EXPERIENCES
-        @def_dates_obs
-        @def_reseaux_exps
-        @generate_list_exps
+      @def_dates_obs
+      @def_reseaux_exps
+      @generate_list_exps
 
 
 ; SETUP FIGURES
       write_ps = 1 ; ecriture fichier postscript / gif
-      dom_plt = dom_tc & plt_path = ''
-      IF n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+par_list[0]+'_vs_'+par_list[1]+'/'
-      IF n_elements(par_list) EQ 1 AND par_list[0] NE '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'/'
-      IF n_elements(par_list) EQ 1 AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
-      IF n_elements(date_list) EQ 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+date_list[0]+'_'+tc_name+'/'
-      IF n_elements(par_list) GT 2 AND n_elements(date_list) GT 1 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'_'+date_list[0]+'-'+date_list[n_elements(date_list)-1]+'/'	
-      IF n_elements(date_list) GT 1 AND  n_elements(par_list) EQ 2 THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+par_list[0]+'_vs_'+par_list[1]+'/'
-      IF date_list[0] EQ '' AND par_list[0] EQ '' THEN plt_path = '/home/gsamson/WORK/IDL/FIGURES/'+tc_name+'/'
-      IF plt_path EQ '' THEN STOP ELSE FILE_MKDIR, plt_path, /NOEXPAND_PATH
+      @define_plt_path
 ;------------------------------------------------------------------------------------------------------------------
 
 
@@ -192,12 +184,14 @@ ENDIF
 ; PLOT DE LA MOYENNE D'ENSEMBLE
 @calcul_ensemble_mean
 @plot_ensemble_mean
+;STOP
 
 ; PLOT ERREURS DE PREVISION D'ENSEMBLE
 @calcul_ensemble_error
 @plot_all_errors
-@save_ensemble_error
 @plot_ensemble_error
+@save_ensemble_error
+;STOP
 
 ;SPAWN, 'for f in '+plt_path+'*.ps; do mv -f $f ${f%.*}.eps; done'
 SPAWN, 'for f in '+plt_path+'*.ps; do ps2epsi $f ${f%.*}.eps; done'

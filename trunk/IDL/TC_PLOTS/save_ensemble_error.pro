@@ -9,12 +9,12 @@ FOR i = 1, nb_exp-1 DO BEGIN
   save_path = '/home/gsamson/WORK/AROME/TEST_CPL/EXPS_'+STRMID(exp_name, 0, 7)+'/EXP_'+exp_name+'_'+date_list[idate]+'/'
   expid     = strtrim(i,2)
   save_file = 'ERRORS_TC.idl'
-  cmd = execute( 'SAVE, date_err_'+expid+', errdist_'+expid+', errwind_'+expid+', errwrad_'+expid+', errmslp_'+expid+', err_rmw_'+expid+', err_sst_'+expid+', FILENAME="'+save_path+save_file+'", /VERBOSE')
+  cmd = execute( 'SAVE, date_err_'+expid+', errdist_'+expid+', errwind_'+expid+', errwrad_'+expid+', errmslp_'+expid+', err_rmw_'+expid+', err_sst_'+expid+', errvdep_'+expid+', FILENAME="'+save_path+save_file+'", /VERBOSE')
 
 ENDFOR
 
 
-err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst' ]
+err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst', 'errvdep' ]
 nb_var   = n_elements(err_list)
 save_path = '/home/gsamson/WORK/AROME/TEST_CPL/EXPS_'+STRMID(exp_name, 0, 7)+'/'
 

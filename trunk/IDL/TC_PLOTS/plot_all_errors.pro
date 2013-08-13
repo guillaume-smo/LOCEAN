@@ -7,8 +7,8 @@ key_portrait = 1
 IF write_ps THEN thc = 6 ELSE thc = 2
 
 
-err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst' ]
-eru_list = [ '(km)', '(m/s)', '(m/s)', '(hPa)', '(km)', '(K)' ]
+err_list = [ 'errdist', 'errwind', 'errwrad', 'errmslp', 'err_rmw', 'err_sst', 'errvdep' ]
+eru_list = [ '(km)', '(m/s)', '(m/s)', '(hPa)', '(km)', '(K)', '(m/s)' ]
 nb_err   = n_elements(err_list)
 lead_time_arom = indgen(maxnbt_arom)*6; & help, lead_time_arom
 

@@ -135,6 +135,39 @@ IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_RVM.gif', quality=100
 
 
 
+; PLOT 1D VDEP
+maxdate=max(date_0,/nan)
+mindate=min(date_0,/nan)
+FOR i = 0, nb_par-1 DO BEGIN
+  cmd = execute('var = ave_VDEP_aro'+strtrim(i,2)+'[*]')
+  cmd = execute('std = std_VDEP_aro'+strtrim(i,2)+'[*]')
+  IF i EQ 0 THEN maxplot=max([VDEP_0,var+std],/nan) ELSE maxplot=max([maxplot,var+std],/nan)
+  IF i EQ 0 THEN minplot=min([VDEP_0,var-std],/nan) ELSE minplot=min([minplot,var-std],/nan)
+ENDFOR
+maxplot = maxplot + 0.05*(maxplot-minplot)
+minplot = minplot - 0.05*(maxplot-minplot)
+
+IF write_ps THEN openps, filename=plt_path+'MEAN_VDEP'
+jpt = n_elements(juld_0) & time = juld_0 + 0.50d
+pltt, VDEP_0, 't', minplot, maxplot, xminor=4, title='ENSEMBLE MEAN: TRANSLATION SPEED', subtitle='', $
+ytitle='VDEP (m/s)', thick=thc, charsize=1.5, charthick=2, ygridstyle=2, yticklen=1
+xyouts, 0.125, 0.180-0.020*0, exp_list[0], /normal, charsize=1.5, charthick=2, color=color_factor*0 MOD 256
+xyouts, 0.375, 0.180-0.020*0, '('+alt_list[0]+')', /normal, charsize=1.5, charthick=2, color=color_factor*0
+
+FOR i = 0, nb_par-1 DO BEGIN
+  cmd = execute('var = ave_VDEP_aro'+strtrim(i,2)+'[*]')
+  cmd = execute('std = std_VDEP_aro'+strtrim(i,2)+'[*]')
+  pltt, var, 't', color=color_factor*(i+color_offset) MOD 256, thick=thc, /ov1D
+  xyouts, 0.125, 0.180-0.020*(i+1), par_list[i], /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  iok = where(finite(var) EQ 1 AND finite(VDEP_0) EQ 1)
+  xyouts, 0.600, 0.180-0.020*(i+1), 'COR: '+STRING(ROUND(CORRELATE(VDEP_0[iok], var[iok])*100)/100., format='(F5.2)'), /normal, charsize=1.5, charthick=2, color=color_factor*(i+color_offset) MOD 256
+  errplot, time, var-std, var+std, color=color_factor*(i+color_offset) MOD 256
+ENDFOR
+IF write_ps THEN closeps ELSE saveimage, plt_path+'MEAN_VDEP.gif', quality=100
+
+
+
+
 ; PLOT SST 
 maxdate=max(date_0,/nan)
 mindate=min(date_0,/nan)
