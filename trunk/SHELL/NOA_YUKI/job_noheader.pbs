@@ -39,7 +39,7 @@ CACPATH=/work/samson/TEST_CPL/FICDIR/CACHE
 COUPATH=EXP_${CFG_AROM}_${EXP_NAME}_${RUN_MODE}_${BEG_DATE}H${INI_HOUR}/$(printf %02d $((10#$RST_HOUR)))H-$(printf %02d $((10#$END_HOUR)))H
 if [ ! -d $OUTPATH ]; then mkdir -p $OUTPATH; else rm -f ${OUTPATH}/*; fi
 if [ ! -d $TMPPATH ]; then mkdir -p $TMPPATH; fi
-if [ $INI_DATE != $RST_DATE ] && [ -e ${RSTPATH}/job.pbs ]; then cp -f ${RSTPATH}/job.pbs ${TMPPATH}/.; fi
+if [ $INI_DATE != $RST_DATE ] && [ -e ${RSTPATH}/job.pbs ] && [ ! -e ${TMPPATH}/job.pbs ]; then cp -f ${RSTPATH}/job.pbs ${TMPPATH}/.; fi
 #-----------------------------------------------------------
 
 
@@ -199,7 +199,7 @@ if [ $RUN_MODE != "NEMO" ]; then
 
   if [ $RUN_MODE == "CPL" ]; then
     # OASIS
-    if [ "$RST_DATE" == "$INI_DATE" ]; then cp -f ${OASPATH}/sstoc_${BEG_DATE}_${BDY_FORC}.nc sstoc.nc; else cp -f ${RSTPATH}/sstoc_$(echo $RST_DATE | sed -e s/-//g).nc sstoc.nc; fi
+    if [ "$RST_DATE" == "$INI_DATE" ]; then cp -f ${OASPATH}/sstoc_${BEG_DATE}H${INI_HOUR}_${BDY_FORC}.nc sstoc.nc; else cp -f ${RSTPATH}/sstoc_$(echo $RST_DATE | sed -e s/-//g).nc sstoc.nc; fi
     if [ "$RST_DATE" == "$INI_DATE" ]; then cp -f ${OASPATH}/flxat.nc flxat.nc; else cp -f ${RSTPATH}/flxat_$(echo $RST_DATE | sed -e s/-//g).nc flxat.nc; fi
     # NEMO
     if [ "$RST_DATE" == "$INI_DATE" ]; then
