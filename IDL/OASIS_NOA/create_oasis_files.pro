@@ -2,22 +2,25 @@ PRO create_oasis_files
 COMPILE_OPT IDL2, STRICTARRSUBS
 
 
-dir = '/home/gsamson/WORK/OASIS/IVAN2km/'
-file_aro = dir + 'MASK_AROME_IVAN2km.nc'
-file_pgd = dir + 'PGD_IVAN2km.nc'
-file_nem = dir + 'MASK_NEMO_IVAN12.nc'
-file_cpl = dir + 'AROMOUT_SURF_IVAN2km.nc'
-date_sst = '20080214'
-file_rst = '/sortref/modele/reg2/IVAN12/GLORYS2V1/RESTART/AFTSPUP_NOAPR/restart_'+date_sst+'.nc'
+date_sst = '20130127H06' ; format yyyymmdd H hh
+product  = 'GLORYS2V3'
+dirin    = '/home/gsamson/WORK/OASIS/IVAN2km/'
+dirou    = '/home/gsamson/WORK/OASIS/IVAN2km_IVAN12/'
+file_aro = dirin + 'MASK_AROME_IVAN2km.nc'
+file_pgd = dirin + 'PGD_IVAN2km.nc'
+file_nem = dirin + 'MASK_NEMO_IVAN12.nc'
+;file_cpl = dirin + 'AROMOUT_SURF_IVAN2km.nc'
+;file_rst = '/sortref/modele/reg2/IVAN12/'+product+'/RESTART/AFTSPUP_NOAPR/restart_'+date_sst+'.nc'
+file_rst = '/home/gsamson/WORK/NEMO/RESTARTS_JEROME/restart_'+date_sst+'.nc'
 ext_zone = 24
-
+SPAWN, 'mkdir -p '+dirou
 
 
 ;-------------------------------------------------
 ; grid file
 ;-------------------------------------------------
 
-  fileg = dir+'grids_arom_nemo_r8'
+  fileg = dirou+'grids_arom_nemo_r8'
 
   lon1D = double(ncdf_lec(file_aro, var = 'lon'))
   lat1D = double(ncdf_lec(file_aro, var = 'lat'))
@@ -85,7 +88,7 @@ ext_zone = 24
 ;-------------------------------------------------
 ; WARNING: OASIS convention: 1  = masked (over land), 0 = not masked (over ocean)
 
-  filem = dir+'masks_arom_nemo_i4'
+  filem = dirou+'masks_arom_nemo_i4'
 
 ;  amskt = lonarr(ciexdim,cieydim) + 1l
 ;  amskt[0:cixdim-1,0:ciydim-1] = long(reverse(ncdf_lec(file_aro, var = 'MASK'),2))
@@ -120,7 +123,7 @@ ext_zone = 24
 ; areas file
 ;-------------------------------------------------
 
-  filer = dir+'areas_arom_nemo_r8'
+  filer = dirou+'areas_arom_nemo_r8'
 
   @cm_4mesh
   computegrid, XAXIS = alon, YAXIS = alat
@@ -160,16 +163,16 @@ ext_zone = 24
 ; sst
 ;-------------------------------------------------
 
-  sstoce = double((reform((ncdf_lec(file_rst, var = 'tb'))))[*,*,0] + 273.15)
+  sstoce = double((reform((ncdf_lec(file_rst, var = 'tn'))))[*,*,0] + 273.15)
   sstoce[where(omskt EQ 1)] = 0.
 
-;  write_oasis, dir+'sstocean', 'O_SSTSST', sstoce
-  write_ncdf, sstoce, varname = ['O_SSTSST'], filename = dir+'sstoc_'+date_sst+'.nc'
+;  write_oasis, dirou+'sstocean', 'O_SSTSST', sstoce
+  write_ncdf, sstoce, varname = ['O_SSTSST'], filename = dirou+'sstoc_'+date_sst+'_'+product+'.nc'
 
-  spawn, 'ncatted -O -h -a ,global,d,, '+dir+'sstoc_'+date_sst+'.nc'
-  spawn, 'ncatted -O -h -a valid_min_max,,d,, '+dir+'sstoc_'+date_sst+'.nc'
-  spawn, 'ncatted -O -h -a valid_min,,d,, '+dir+'sstoc_'+date_sst+'.nc'
-  spawn, 'ncatted -O -h -a valid_max,,d,, '+dir+'sstoc_'+date_sst+'.nc'
+  spawn, 'ncatted -O -h -a ,global,d,, '+dirou+'sstoc_'+date_sst+'_'+product+'.nc'
+  spawn, 'ncatted -O -h -a valid_min_max,,d,, '+dirou+'sstoc_'+date_sst+'_'+product+'.nc'
+  spawn, 'ncatted -O -h -a valid_min,,d,, '+dirou+'sstoc_'+date_sst+'_'+product+'.nc'
+  spawn, 'ncatted -O -h -a valid_max,,d,, '+dirou+'sstoc_'+date_sst+'_'+product+'.nc'
 
 STOP
 
@@ -178,24 +181,24 @@ STOP
 ; flx
 ;-------------------------------------------------
 
-;  write_oasis, dir+'flxatmos', 'COZOTAUX', dblarr(jpia, jpja)
-;  write_oasis, dir+'flxatmos', 'COMETAUU', dblarr(jpia, jpja), /append
-;  write_oasis, dir+'flxatmos', 'COZOTAUV', dblarr(jpia, jpja), /append
-;  write_oasis, dir+'flxatmos', 'COMETAUY', dblarr(jpia, jpja), /append
-;  write_oasis, dir+'flxatmos', 'CONSFTOT', dblarr(jpia, jpja), /append
-;  write_oasis, dir+'flxatmos', 'COSHFTOT', dblarr(jpia, jpja), /append
-;  write_oasis, dir+'flxatmos', 'COWATFLU', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'COZOTAUX', dblarr(jpia, jpja)
+;  write_oasis, dirou+'flxatmos', 'COMETAUU', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'COZOTAUV', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'COMETAUY', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'CONSFTOT', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'COSHFTOT', dblarr(jpia, jpja), /append
+;  write_oasis, dirou+'flxatmos', 'COWATFLU', dblarr(jpia, jpja), /append
 
   tmp = dblarr(ciexdim,cieydim)
 
   write_ncdf, tmp, tmp, tmp, tmp, tmp, tmp, tmp, $
   varname = ['COZOTAUX', 'COMETAUU', 'COZOTAUV', 'COMETAUY', 'CONSFTOT', 'COSHFTOT', 'COWATFLU'], $
-  filename =  dir+'flxat.nc'
+  filename =  dirou+'flxat.nc'
 
-  spawn, 'ncatted -O -h -a ,global,d,, '+dir+'flxat.nc'
-  spawn, 'ncatted -O -h -a valid_min_max,,d,, '+dir+'flxat.nc'
-  spawn, 'ncatted -O -h -a valid_min,,d,, '+dir+'flxat.nc'
-  spawn, 'ncatted -O -h -a valid_max,,d,, '+dir+'flxat.nc'
+  spawn, 'ncatted -O -h -a ,global,d,, '+dirou+'flxat.nc'
+  spawn, 'ncatted -O -h -a valid_min_max,,d,, '+dirou+'flxat.nc'
+  spawn, 'ncatted -O -h -a valid_min,,d,, '+dirou+'flxat.nc'
+  spawn, 'ncatted -O -h -a valid_max,,d,, '+dirou+'flxat.nc'
 
 
 STOP
@@ -204,7 +207,7 @@ STOP
 ; mozaic oce -> atm
 ;-------------------------------------------------
 
-  fo2a = dir+'mozaic_ind4_wrf4_i4r8'
+  fo2a = dirou+'mozaic_ind4_wrf4_i4r8'
 
   addr = lonarr(jpia, jpja)
   oce = where(omsk EQ 1b)
