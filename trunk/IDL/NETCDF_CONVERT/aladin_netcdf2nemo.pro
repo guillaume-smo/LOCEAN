@@ -1,15 +1,16 @@
 PRO aladin_netcdf2nemo
 @all_cm
 
-date     = '200902'
-file     = '/homelocal-px/px-126/gsamson/WORK/ALADIN/OPER_ASSIM_ECH6/'+date+'/ICMSHALAD+0006_'+date+'.nc'
-output   = '/homelocal-px/px-126/gsamson/WORK/ALADIN/OPER_ASSIM_ECH6/'+date+'/ICMSHALAD+0006_'+date+'_NEMO.nc'
+date     = '201301'
+file     = '/homelocal-px/px-126/gsamson/WORK/ALADIN/OPER_ASSIM_ECH6/'+date+'/ICMSHALAD+0006_'+date+'_v2.nc'
+output   = '/homelocal-px/px-126/gsamson/WORK/ALADIN/OPER_ASSIM_ECH6/'+date+'/ICMSHALAD+0006_'+date+'_NEMO_v2.nc'
 dom_ivan = [45.5000,68.0000,-21.7110,-9.21008]
 
 initncdf, file
 ;domdef, dom_ivan
 juld = ncdf_gettime(file) & help, juld
-print, 'PERIOD:', jul2date(juld[0]), jul2date(juld[jpt-1]), f='(A7, 2(1X,F11.2))'
+print, 'PERIOD READ :', jul2date(juld[0]), jul2date(juld[jpt-1]), f='(A13, 2(1X,F11.2))'
+print, 'PERIOD CHECK:', jul2date(juld[0]), jul2date(juld[0]+(jpt-1)*0.25d), f='(A13, 2(1X,F11.2))'
 
 
 ; MASK + BIG_MASK

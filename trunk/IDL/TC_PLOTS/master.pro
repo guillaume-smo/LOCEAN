@@ -49,7 +49,7 @@ PRO master
 
 ; SETUP FIGURES
       write_ps = 1 ; ecriture fichier postscript / gif
-      @define_plt_path
+      @def_plt_path
 ;------------------------------------------------------------------------------------------------------------------
 
 
