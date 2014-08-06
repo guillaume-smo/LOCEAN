@@ -1729,8 +1729,8 @@ CONTAINS
 
 !------------------------------------------------------------------
    SUBROUTINE RRTMLWRAD(rthraten                                  &
-                       ,lwupt, lwuptc, lwdnt, lwdntc,             &
-                       ,lwupb, lwupbc, lwdnb, lwdnbc,             &
+                       ,lwupt, lwuptc, lwdnt, lwdntc              &
+                       ,lwupb, lwupbc, lwdnb, lwdnbc              &
                        ,lwcf,glw,olr,emiss                        &
                        ,p8w,p3d,pi3d                              &
                        ,dz8w,tsk,t3d,t8w,rho3d,r,g                &
@@ -1947,7 +1947,7 @@ CONTAINS
          CALL RRTM(tten1d,glw0,olr0,tsfc,cldfra1d,t1d,tw1d,qv1d,qc1d,   &
                    qr1d,qi1d,qs1d,qg1d,p1d,pW1d,dz1d,              &
                    emiss0,r,g,                                     &
-                   kts,kte                                         &
+                   kts,kte,                                        &
                    flup,flupc,fldn,fldnc                           )
  
          GLW(I,J)=GLW0
@@ -2024,7 +2024,7 @@ CONTAINS
    SUBROUTINE RRTM(TTEN,GLW,OLR,TSFC,CLDFRA,T,Tw,QV,QC,              &
                    QR,QI,QS,QG,P,Pw,DZ,                              &
                    EMISS,R,G,                                        &
-                   kts,kte                                           &
+                   kts,kte,                                          &
                    FLUP,FLUPC,FLDN,FLDNC                             )
 !---------------------------------------------------------------------
 ! *** This program is the driver for RRTM, the AER LW radiation model.           

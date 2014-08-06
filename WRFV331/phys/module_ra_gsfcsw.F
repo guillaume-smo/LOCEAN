@@ -17,7 +17,7 @@ CONTAINS
                    ,alb,t3d,qv3d,qc3d,qr3d                        &
                    ,qi3d,qs3d,qg3d,qndrop3d                       &
                    ,p3d,p8w3d,pi3d,cldfra3d,rswtoa                &
-                   ,swupt,swuptc,swdnt,swdntc,                    &
+                   ,swupt,swuptc,swdnt,swdntc                     &
                    ,swupb,swupbc,swdnb,swdnbc,swcf                &
                    ,gmt,cp,g,julday,xtime,declin,solcon           &
                    ,radfrq,degrad,taucldi,taucldc,warm_rain       &
@@ -800,7 +800,8 @@ CONTAINS
           swdntc(i,j)    = 0.
           swupb(i,j)     = 0.
           swdnb(i,j)     = 0.
-          swnebc(i,j)    = 0.
+          swupbc(i,j)    = 0.
+          swdnbc(i,j)    = 0.
           swcf(i,j)      = 0.
         else
           swupt(i,j)     = RSWTOA(i,j)
@@ -813,7 +814,7 @@ CONTAINS
           swdnbc(i,j)    = flc(i,kte+1)
           swcf(i,j)      = flx(i,kts) - flc(i,kts)
         endif
-
+      end do
 
       DO K=kts,kte          
          NK=kme-1-K+kms
