@@ -140,7 +140,7 @@ CONTAINS
                       I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC,  &
                       I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC,  &
                       I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC
-   INTEGER, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
+   REAL, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
                       SWUPT,SWUPTC,SWDNT,SWDNTC,  &
                       SWUPB,SWUPBC,SWDNB,SWDNBC,  &
                       LWUPT,LWUPTC,LWDNT,LWDNTC,  &
