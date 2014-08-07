@@ -3119,7 +3119,8 @@ CONTAINS
        pcrit,acrit,acritt
 
      integer :: nall2,ixxx,irandom
-     integer,  dimension (8) :: seed
+     ! BUGFIX "seed" variable dimension 8->12: http://forum.wrfforum.com/viewtopic.php?f=5&t=3777
+     integer,  dimension (12) :: seed
 
 
       DATA PCRIT/850.,800.,750.,700.,650.,600.,550.,500.,450.,400.,    &
