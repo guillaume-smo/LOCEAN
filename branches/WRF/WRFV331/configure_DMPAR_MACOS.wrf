@@ -91,19 +91,20 @@ LIBWRFLIB = libwrflib.a
 
 #### Architecture specific settings ####
 
-# Settings for Darwin (MACOS) gfortran with gcc  (serial)
+# Settings for Darwin (MACOS) gfortran with gcc  (dmpar)
 #
-DMPARALLEL      =       # 1
+DMPARALLEL      =        1
 OMPCPP          =       # -D_OPENMP
 OMP             =       # -fopenmp
 OMPCC           =       # -fopenmp
 SFC             =       gfortran
 SCC             =       gcc
 CCOMP           =       gcc
-DM_FC           =       mpif90 -f90=$(SFC)
-DM_CC           =       mpicc -cc=$(SCC)
-FC              =        $(SFC)
-CC              =       $(SCC) -DFSEEKO_OK 
+#DM_FC           =       mpif90 -f90=$(SFC)
+DM_FC           =       mpif90 -DMPI2_SUPPORT
+DM_CC           =       mpicc -cc=$(SCC) -DMPI2_SUPPORT
+FC              =        $(DM_FC)
+CC              =       $(DM_CC) -DFSEEKO_OK 
 LD              =       $(FC)
 RWORDSIZE       =       $(NATIVE_RWORDSIZE)
 PROMOTION       =       # -fdefault-real-8  # uncomment manually
@@ -112,8 +113,8 @@ CFLAGS_LOCAL    =       -w -O3 -c -DLANDREAD_STUB -DMACOS
 LDFLAGS_LOCAL   =
 CPLUSPLUSLIB    =       
 ESMF_LDFLAG     =       $(CPLUSPLUSLIB)
-# BUGFIX WITH GFORTRAN: http://www2.mmm.ucar.edu/wrf/users/wrfda/yellowstone.html
-FCOPTIM         =       -O3 -ftree-vectorize -funroll-loops # -ftree-loop-linear
+#FCOPTIM         =       -O3 -ftree-vectorize -ftree-loop-linear -funroll-loops 
+FCOPTIM         =       -O3 -ftree-vectorize -funroll-loops
 FCREDUCEDOPT	=       $(FCOPTIM)
 FCNOOPT         =       -O0
 FCDEBUG         =       # -g $(FCNOOPT)
@@ -141,7 +142,7 @@ FGREP = fgrep -iq
 ARCHFLAGS       =    $(COREDEFS) -DIWORDSIZE=$(IWORDSIZE) -DDWORDSIZE=$(DWORDSIZE) -DRWORDSIZE=$(RWORDSIZE) -DLWORDSIZE=$(LWORDSIZE) \
                      $(ARCH_LOCAL) \
                      $(DA_ARCHFLAGS) \
-                       \
+                      -DDM_PARALLEL \
                        \
                       -DNETCDF \
                        \
@@ -160,7 +161,7 @@ ARCHFLAGS       =    $(COREDEFS) -DIWORDSIZE=$(IWORDSIZE) -DDWORDSIZE=$(DWORDSIZ
                       -DMAX_DOMAINS_F=$(MAX_DOMAINS) \
                       -DMAX_HISTORY=$(MAX_HISTORY) \
 		      -DNMM_NEST=$(WRF_NMM_NEST)
-CFLAGS          =    $(CFLAGS_LOCAL)   \
+CFLAGS          =    $(CFLAGS_LOCAL) -DDM_PARALLEL  \
                       -DMAX_HISTORY=$(MAX_HISTORY)
 FCFLAGS         =    $(FCOPTIM) $(FCBASEOPTS)
 ESMF_LIB_FLAGS  =    
@@ -186,7 +187,7 @@ REGISTRY        =    Registry
                       $(WRF_SRC_ROOT_DIR)/external/io_grib_share/libio_grib_share.a \
                       $(WRF_SRC_ROOT_DIR)/external/io_int/libwrfio_int.a \
                       $(ESMF_IO_LIB) \
-                       \
+                      $(WRF_SRC_ROOT_DIR)/external/RSL_LITE/librsl_lite.a \
                       $(WRF_SRC_ROOT_DIR)/frame/module_internal_header_util.o \
                       $(WRF_SRC_ROOT_DIR)/frame/pack_utils.o 
 
@@ -202,7 +203,7 @@ NETCDFPATH      =    /opt/local/
 PNETCDFPATH     =    
 
 bundled:  wrf_ioapi_includes wrfio_grib_share wrfio_grib1 wrfio_int esmf_time fftpack 
-external:  wrfio_nf   gen_comms_serial module_dm_serial $(ESMF_TARGET)
+external:  wrfio_nf   $(WRF_SRC_ROOT_DIR)/external/RSL_LITE/librsl_lite.a gen_comms_rsllite module_dm_rsllite $(ESMF_TARGET)
 
 ######################
 externals: bundled external

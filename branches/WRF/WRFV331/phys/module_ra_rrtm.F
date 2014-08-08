@@ -1771,7 +1771,8 @@ CONTAINS
 !
    REAL, DIMENSION( ims:ime, jms:jme )                          , &
          INTENT(INOUT)  ::                                   GLW, &
-                                                             OLR
+                                                             OLR, &
+                                                             LWCF
 !
    REAL, INTENT(IN  )   ::                                   R,G
 !
@@ -1780,8 +1781,7 @@ CONTAINS
    REAL, DIMENSION( ims:ime, jms:jme )                           ,&
          OPTIONAL                                                ,& 
          INTENT(INOUT)  ::              LWUPT,LWUPTC,LWDNT,LWDNTC,&
-                                        LWUPB,LWUPBC,LWDNB,LWDNBC,&
-                                                             LWCF
+                                        LWUPB,LWUPBC,LWDNB,LWDNBC
 !
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme )                 , &
          OPTIONAL                                               , &
@@ -1843,7 +1843,11 @@ CONTAINS
             QR1D(K)=0.
             QI1D(K)=0.
             QS1D(K)=0.
-            CLDFRA1D(k)=0.
+            CLDFRA1D(K)=0.
+            FLUP(K)=0.
+            FLUPC(K)=0.
+            FLDN(K)=0.
+            FLDNC(K)=0.
          ENDDO
 
          DO K=kts,kte
@@ -1861,6 +1865,7 @@ CONTAINS
          ENDDO
 
          IF (ICLOUD .ne. 0) THEN
+
             IF ( PRESENT( CLDFRA3D ) ) THEN
               DO K=kts,kte
                  NK=kme-1-K+kms
@@ -1950,26 +1955,19 @@ CONTAINS
                    kts,kte,                                        &
                    flup,flupc,fldn,fldnc                           )
  
-         GLW(I,J)=GLW0
-         OLR(I,J)=OLR0 
+         GLW(I,J)  = GLW0
+         OLR(I,J)  = OLR0 
+         lwcf(i,j) = flupc(kte) - flup(kte)
 
          IF(PRESENT(LWUPT))THEN
-           DO k=kts,kte
-              nk=kme-1-k+kms
-              if(k.eq.kte+1)then
-                lwupt(i,j)  = flup(nk)
-                lwuptc(i,j) = flupc(nk)
-                lwdnt(i,j)  = fldn(nk)
-                lwdntc(i,j) = fldnc(nk)
-              endif
-              if(k.eq.kts)then
-                lwupb(i,j)  = flup(nk)
-                lwupbc(i,j) = flupc(nk)
-                lwdnb(i,j)  = fldn(nk)
-                lwdnbc(i,j) = fldnc(nk)
-              endif
-           ENDDO
-           lwcf(i,j) = lwuptc(i,j) - lwupt(i,j)
+           lwupt(i,j)  = flup(kte)
+           lwuptc(i,j) = flupc(kte)
+           lwdnt(i,j)  = fldn(kte)
+           lwdntc(i,j) = fldnc(kte)
+           lwupb(i,j)  = flup(kts)
+           lwupbc(i,j) = flupc(kts)
+           lwdnb(i,j)  = fldn(kts)
+           lwdnbc(i,j) = fldnc(kts)
          ENDIF
  
          DO K=kts,kte
@@ -2065,7 +2063,7 @@ CONTAINS
 !
       REAL, INTENT(INOUT)  ::                          TSFC,GLW,OLR
 !
-	    REAL, DIMENSION( kts:kte ), INTENT(INOUT) ::      FLUP, FLUPC, &
+	   REAL, DIMENSION( kts:kte ), INTENT(INOUT) ::      FLUP, FLUPC, &
                                                         FLDN, FLDNC
 
 ! LOCAL VAR
@@ -2246,10 +2244,10 @@ CONTAINS
               TTEN(K)=HTR(kte-k)/86400. 
  2450      continue                                                              
 !
-           FLUP  = TOTUFLUX(kts:kte)
-           FLDN  = TOTDFLUX(kts:kte)
-           FLUPC = TOTUCLFL(kts:kte)
-           FLDNC = TOTDCLFL(kts:kte)
+           FLUP(:)  = TOTUFLUX(kts:kte)
+           FLDN(:)  = TOTDFLUX(kts:kte)
+           FLUPC(:) = TOTUCLFL(kts:kte)
+           FLDNC(:) = TOTDCLFL(kts:kte)
 !
            GLW = TOTDFLUX(0)
            OLR = TOTUFLUX(NLAYERS)

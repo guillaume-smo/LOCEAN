@@ -3119,7 +3119,6 @@ CONTAINS
        pcrit,acrit,acritt
 
      integer :: nall2,ixxx,irandom
-     ! BUGFIX: http://forum.wrfforum.com/viewtopic.php?f=5&t=3777
      integer,  dimension (12) :: seed
 
 

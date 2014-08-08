@@ -323,9 +323,9 @@ BENCH_START(rad_driver_tim)
      &        ,LWDNT=grid%lwdnt    ,LWDNTC=grid%lwdntc                    &
      &        ,LWUPB=grid%lwupb    ,LWUPBC=grid%lwupbc                    &
      &        ,LWDNB=grid%lwdnb    ,LWDNBC=grid%lwdnbc                    &
-     &        ,LWCF=grid%lwcf                                                  &
-     &        ,SWCF=grid%swcf                                                  &
-     &        ,OLR=grid%olr                                                    &
+     &        ,LWCF=grid%lwcf                                             &
+     &        ,SWCF=grid%swcf                                             &
+     &        ,OLR=grid%olr                                               &
      &        ,OZMIXM=grid%ozmixm, PIN=grid%pin                                     &
      &        ,M_PS_1=grid%m_ps_1, M_PS_2=grid%m_ps_2, AEROSOLC_1=grid%aerosolc_1        &
      &        ,AEROSOLC_2=grid%aerosolc_2, M_HYBI0=grid%m_hybi                      &

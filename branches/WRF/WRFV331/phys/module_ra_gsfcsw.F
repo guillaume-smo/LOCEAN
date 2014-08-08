@@ -57,6 +57,7 @@ CONTAINS
 
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                  &
          INTENT(INOUT)  ::                              RTHRATEN
+
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                  &
          OPTIONAL,                                                &
          INTENT(INOUT)  ::                               taucldi, &
@@ -70,12 +71,10 @@ CONTAINS
    REAL, DIMENSION( ims:ime, jms:jme ),                           &
          INTENT(INOUT)  ::                                   GSW, &
                                                           RSWTOA, &
-                                       SWUPT,SWUPTC,SWDNT,SWDNTC, &
-                                  SWUPB,SWUPBC,SWDNB,SWDNBC,SWCF
+                                                            SWCF
 !
    REAL, INTENT(IN   )  ::                              GMT,CP,G
 !
-
 !
 ! Optional
 !
@@ -83,9 +82,9 @@ CONTAINS
          INTENT(IN    ) :: tauaer300,tauaer400,tauaer600,tauaer999, & ! jcb
                                  gaer300,gaer400,gaer600,gaer999, & ! jcb
                                  waer300,waer400,waer600,waer999    ! jcb
-
+!
    INTEGER,    INTENT(IN  ), OPTIONAL   ::       aer_ra_feedback
-
+!
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                  &
          OPTIONAL,                                                &           
          INTENT(IN    ) ::                                        &
@@ -96,13 +95,19 @@ CONTAINS
                                                             QS3D, &
                                                             QG3D, &
                                                         QNDROP3D
-
+!
    LOGICAL, OPTIONAL, INTENT(IN ) ::    &
                                    F_QV,F_QC,F_QR,F_QI,F_QS,F_QG, &
                                                         F_QNDROP
-
+!
+   REAL, DIMENSION( ims:ime, jms:jme ),                           &
+         OPTIONAL,                                                &
+         INTENT(INOUT)  ::                                        &
+                                       SWUPT,SWUPTC,SWDNT,SWDNTC, &
+                                       SWUPB,SWUPBC,SWDNB,SWDNBC
+!
 ! LOCAL VARS
- 
+! 
    REAL, DIMENSION( its:ite ) ::                                  &
                                                               ts, &
                                                             cosz, &
@@ -783,38 +788,40 @@ CONTAINS
         if (cosz(i) .le. thresh) then
           RSWTOA(i,j) = 0.
           GSW(i,j)    = 0.
+          swcf(i,j)   = 0.
         else
           RSWTOA(i,j) = flx(i,kts) - flxd(i,kts)
           GSW(i,j)    = (1. - rsuvbm(i)) * flxd(i,kte+1)
+          swcf(i,j)   = flx(i,kts) - flc(i,kts)
         endif
       end do
-!
 !
 ! ... Added shortwave upward/downward total and net clear sky fluxes (adapted from CAM radiative scheme)
+! ... WARNING: only clear-sky NET fluxes are available, ie swuptc = swdntc =sw_net_tc and swupbc = swdnbc = sw_net_bc
 !
-      do i = its, ite
-        if (cosz(i) .le. thresh) then
-          swupt(i,j)     = 0.
-          swdnt(i,j)     = 0.
-          swuptc(i,j)    = 0.
-          swdntc(i,j)    = 0.
-          swupb(i,j)     = 0.
-          swdnb(i,j)     = 0.
-          swupbc(i,j)    = 0.
-          swdnbc(i,j)    = 0.
-          swcf(i,j)      = 0.
-        else
-          swupt(i,j)     = RSWTOA(i,j)
-          swdnt(i,j)     = flxd(i,kts)
-          swuptc(i,j)    = flc(i,kts)
-          swdntc(i,j)    = flc(i,kts)
-          swupb(i,j)     = flx(i,kte+1) - flxd(i,kte+1)
-          swdnb(i,j)     = flxd(i,kte+1)
-          swupbc(i,j)    = flc(i,kte+1)
-          swdnbc(i,j)    = flc(i,kte+1)
-          swcf(i,j)      = flx(i,kts) - flc(i,kts)
-        endif
-      end do
+      IF(PRESENT(SWUPT))THEN
+         do i = its, ite
+           if (cosz(i) .le. thresh) then
+             swupt(i,j)     = 0.
+             swdnt(i,j)     = 0.
+             swuptc(i,j)    = 0.
+             swdntc(i,j)    = 0.
+             swupb(i,j)     = 0.
+             swdnb(i,j)     = 0.
+             swupbc(i,j)    = 0.
+             swdnbc(i,j)    = 0.
+           else
+             swupt(i,j)     = RSWTOA(i,j)
+             swdnt(i,j)     = flxd(i,kts)
+             swuptc(i,j)    = flc(i,kts)
+             swdntc(i,j)    = flc(i,kts)
+             swupb(i,j)     = flx(i,kte+1) - flxd(i,kte+1)
+             swdnb(i,j)     = flxd(i,kte+1)
+             swupbc(i,j)    = flc(i,kte+1)
+             swdnbc(i,j)    = flc(i,kte+1)
+           endif
+         end do
+      endif
 
       DO K=kts,kte          
          NK=kme-1-K+kms
