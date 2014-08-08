@@ -18,10 +18,10 @@ CONTAINS
                      ,ACSWUPB,ACSWUPBC,ACSWDNB,ACSWDNBC               & ! Optional
                      ,ACLWUPT,ACLWUPTC,ACLWDNT,ACLWDNTC               & ! Optional
                      ,ACLWUPB,ACLWUPBC,ACLWDNB,ACLWDNBC               & ! Optional
-                     ,I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC       & ! Optional
-                     ,I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC       & ! Optional
-                     ,I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC       & ! Optional
-                     ,I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC       & ! Optional
+!                     ,I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC       & ! Optional
+!                     ,I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC       & ! Optional
+!                     ,I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC       & ! Optional
+!                     ,I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC       & ! Optional
                      ,SWUPT,SWUPTC,SWDNT,SWDNTC                       & ! Optional
                      ,SWUPB,SWUPBC,SWDNB,SWDNBC                       & ! Optional
                      ,LWUPT,LWUPTC,LWDNT,LWDNTC                       & ! Optional
@@ -135,11 +135,11 @@ CONTAINS
                       ACSWUPB,ACSWUPBC,ACSWDNB,ACSWDNBC,          &
                       ACLWUPT,ACLWUPTC,ACLWDNT,ACLWDNTC,          &
                       ACLWUPB,ACLWUPBC,ACLWDNB,ACLWDNBC
-   INTEGER, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
-                      I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC,  &
-                      I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC,  &
-                      I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC,  &
-                      I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC
+!   INTEGER, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
+!                      I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC,  &
+!                      I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC,  &
+!                      I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC,  &
+!                      I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC
    REAL, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
                       SWUPT,SWUPTC,SWDNT,SWDNTC,  &
                       SWUPB,SWUPBC,SWDNB,SWDNBC,  &
