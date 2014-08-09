@@ -1728,20 +1728,10 @@ MODULE module_ra_rrtm
 CONTAINS
 
 !------------------------------------------------------------------
-<<<<<<< .working
-<<<<<<< .working
    SUBROUTINE RRTMLWRAD(rthraten                                  &
                        ,lwupt, lwuptc, lwdnt, lwdntc              &
                        ,lwupb, lwupbc, lwdnb, lwdnbc              &
                        ,lwcf,glw,olr,emiss                        &
-=======
-!   SUBROUTINE RRTMLWRAD(rthraten,glw,olr,emiss                    &
-   SUBROUTINE RRTMLWRAD(rthraten,glw,netlw,netlwc,olr,emiss       & !*SB**2013
->>>>>>> .merge-right.r61
-=======
-!   SUBROUTINE RRTMLWRAD(rthraten,glw,olr,emiss                    &
-   SUBROUTINE RRTMLWRAD(rthraten,glw,netlw,netlwc,olr,emiss       & !*SB**2013
->>>>>>> .merge-right.r61
                        ,p8w,p3d,pi3d                              &
                        ,dz8w,tsk,t3d,t8w,rho3d,r,g                &
                        ,icloud, warm_rain                         &
@@ -1783,10 +1773,6 @@ CONTAINS
          INTENT(INOUT)  ::                                   GLW, &
                                                              OLR, &
                                                              LWCF
-   REAL, DIMENSION( ims:ime, jms:jme ) , &                            !*SB**2013
-         INTENT(INOUT)  ::                         NETLW, NETLWC      !*SB**2013
-   REAL, DIMENSION( ims:ime, jms:jme ) , &                            !*SB**2013
-         INTENT(INOUT)  ::                         NETLW, NETLWC      !*SB**2013
 !
    REAL, INTENT(IN  )   ::                                   R,G
 !
@@ -1827,18 +1813,8 @@ CONTAINS
                                                             QS1D, &
                                                             QG1D
 !
-<<<<<<< .working
-<<<<<<< .working
    REAL, DIMENSION( kts:kte ) ::                     FLUP, FLUPC, &
                                                      FLDN, FLDNC
-=======
-!    REAL   ::                              TSFC,GLW0,OLR0,EMISS0
-    REAL ::                  TSFC,GLW0,NETLW0,NETLW0C,OLR0,EMISS0 !*SB**2013
->>>>>>> .merge-right.r61
-=======
-!    REAL   ::                              TSFC,GLW0,OLR0,EMISS0
-    REAL ::                  TSFC,GLW0,NETLW0,NETLW0C,OLR0,EMISS0 !*SB**2013
->>>>>>> .merge-right.r61
 !
    REAL   ::                               TSFC,GLW0,OLR0,EMISS0
 !
@@ -1970,19 +1946,15 @@ CONTAINS
 
          EMISS0=EMISS(I,J)
          GLW0=0. 
-         NETLW0 =0. !*SB**2013
-         NETLW0C=0. !*SB**2013
          OLR0=0. 
          TSFC=TSK(I,J)
 
-         !CALL RRTM(tten1d,glw0,olr0,tsfc,cldfra1d,t1d,tw1d,qv1d,qc1d,   &
-         CALL RRTM(tten1d,glw0,netlw0,netlw0c,olr0,tsfc,cldfra1d,t1d,tw1d,qv1d,qc1d, & !*SB**2013
+         CALL RRTM(tten1d,glw0,olr0,tsfc,cldfra1d,t1d,tw1d,qv1d,qc1d,   &
                    qr1d,qi1d,qs1d,qg1d,p1d,pW1d,dz1d,              &
                    emiss0,r,g,                                     &
                    kts,kte,                                        &
                    flup,flupc,fldn,fldnc                           )
  
-<<<<<<< .working
          GLW(I,J)  = GLW0
          OLR(I,J)  = OLR0 
          lwcf(i,j) = flupc(kte) - flup(kte)
@@ -1997,12 +1969,6 @@ CONTAINS
            lwdnb(i,j)  = fldn(kts)
            lwdnbc(i,j) = fldnc(kts)
          ENDIF
-=======
-         GLW(I,J)=GLW0
-         NETLW(I,J) =NETLW0  !*SB**2013
-         NETLWC(I,J)=NETLW0C !*SB**2013
-         OLR(I,J)=OLR0 
->>>>>>> .merge-right.r61
  
          DO K=kts,kte
             nk=kme-1-k+kms
@@ -2053,8 +2019,7 @@ CONTAINS
 ! *** transfer (based on a code for interface with CCM model by M. J. Iacono)    
 ! *** J. Dudhia ; March, 1999                                                    
 !---------------------------------------------------------------------
-!   SUBROUTINE RRTM(TTEN,GLW,OLR,TSFC,CLDFRA,T,Tw,QV,QC,              &
-   SUBROUTINE RRTM(TTEN,GLW,NETLW,NETLWC,OLR,TSFC,CLDFRA,T,Tw,QV,QC, & !*SB**2013
+   SUBROUTINE RRTM(TTEN,GLW,OLR,TSFC,CLDFRA,T,Tw,QV,QC,              &
                    QR,QI,QS,QG,P,Pw,DZ,                              &
                    EMISS,R,G,                                        &
                    kts,kte,                                          &
@@ -2097,17 +2062,9 @@ CONTAINS
       REAL, INTENT(IN  )   ::                           R, G, EMISS
 !
       REAL, INTENT(INOUT)  ::                          TSFC,GLW,OLR
-<<<<<<< .working
-<<<<<<< .working
 !
 	   REAL, DIMENSION( kts:kte ), INTENT(INOUT) ::      FLUP, FLUPC, &
                                                         FLDN, FLDNC
-=======
-      REAL, INTENT(INOUT)  ::                          NETLW,NETLWC !*SB**2013
->>>>>>> .merge-right.r61
-=======
-      REAL, INTENT(INOUT)  ::                          NETLW,NETLWC !*SB**2013
->>>>>>> .merge-right.r61
 
 ! LOCAL VAR
 
@@ -2153,10 +2110,6 @@ CONTAINS
                                                                  TZ, &
                                                   TOTDFLUX,TOTDCLFL, &
                                                   TOTUFLUX,TOTUCLFL, &
-                                                               FNET, & !*SB**2013
-                                                              FNETC, & !*SB**2013
-                                                               FNET, & !*SB**2013
-                                                              FNETC, & !*SB**2013
                                                                 HTR
 !     
       INTEGER ::  I,K,ktep1
@@ -2264,18 +2217,10 @@ CONTAINS
                                                                                  
 !  Call the radiative transfer routine.                                      
                                                                                  
-<<<<<<< .working
-!           CALL RTRN(kts,ktep1,                                  &
-           CALL RTRN(kts,ktep1, FNET, FNETC,                     &
+           CALL RTRN(kts,ktep1,                                  &
                      TAVEL, PZ, TZ, CLDFRAC, TAUCLOUD,           & 
                      TOTDFLUX, TOTDCLFL, TOTUFLUX, TOTUCLFL,     &
                      HTR, ICLDLYR, ITR, PFRAC, TBOUND,SEMISS     )
-=======
-!           CALL RTRN(kts,ktep1,                                  &
-           CALL RTRN(kts,ktep1, FNET, FNETC,                     &
-                     TAVEL, PZ, TZ, CLDFRAC, TAUCLOUD, TOTDFLUX, &
-                     TOTUFLUX, HTR, ICLDLYR, ITR, PFRAC, TBOUND,SEMISS     )
->>>>>>> .merge-right.r61
                                                                                  
 !  Pass total sky up and down flux profiles to CCM output arrays and             
 !  convert from mks to cgs units for CCM.  Pass clear sky TOA and surface        
@@ -2305,20 +2250,8 @@ CONTAINS
            FLDNC(:) = TOTDCLFL(kts:kte)
 !
            GLW = TOTDFLUX(0)
-<<<<<<< .working
-<<<<<<< .working
            OLR = TOTUFLUX(NLAYERS)
 !           OLR = TOTUFLUX(kte)
-=======
-           NETLW = FNET(kte)  !*SB**2013
-           NETLWC= FNETC(kte) !*SB**2013
-=======
-           NETLW = FNET(kte)  !*SB**2013
-           NETLWC= FNETC(kte) !*SB**2013
->>>>>>> .merge-right.r61
-!           OLR = TOTUFLUX(NLAYERS)
-           OLR = TOTUFLUX(kte)
->>>>>>> .merge-right.r61
 
    END SUBROUTINE RRTM
 
@@ -6200,18 +6133,10 @@ CONTAINS
                                                                                  
 
 !-------------------------------------------------------------------------
-<<<<<<< .working
-!      SUBROUTINE RTRN(kts,ktep1,                                         &
-      SUBROUTINE RTRN(kts,ktep1, FNET, FNETC,                            & !*SB**2013
+      SUBROUTINE RTRN(kts,ktep1,                                         &
                       TAVEL, PZ, TZ, CLDFRAC, TAUCLOUD,                  &
                       TOTDFLUX, TOTDCLFL, TOTUFLUX, TOTUCLFL,            &
                       HTR, ICLDLYR, ITR, PFRAC, TBOUND,SEMISS  )
-=======
-!      SUBROUTINE RTRN(kts,ktep1,                                         &
-      SUBROUTINE RTRN(kts,ktep1, FNET, FNETC,                            & !*SB**2013
-                      TAVEL, PZ, TZ, CLDFRAC, TAUCLOUD, TOTDFLUX,        &
-                      TOTUFLUX, HTR, ICLDLYR, ITR, PFRAC, TBOUND,SEMISS  )
->>>>>>> .merge-right.r61
 !-------------------------------------------------------------------------
 !  RRTM Longwave Radiative Transfer Model                                        
 !  Atmospheric and Environmental Research, Inc., Cambridge, MA                   
@@ -6247,24 +6172,10 @@ CONTAINS
                                                 TOTDFLUX, &
                                                 TOTUFLUX
 
-<<<<<<< .working
-<<<<<<< .working
       REAL, DIMENSION(   0:ktep1 ),INTENT(INOUT)::        &
                                                 TOTUCLFL, &
                                                 TOTDCLFL
 
-=======
-      REAL, DIMENSION(   0:ktep1 ),INTENT(INOUT)::        &  !*SB**2013
-                                                    FNET, &  !*SB**2013
-                                                   FNETC     !*SB**2013
-
->>>>>>> .merge-right.r61
-=======
-      REAL, DIMENSION(   0:ktep1 ),INTENT(INOUT)::        &  !*SB**2013
-                                                    FNET, &  !*SB**2013
-                                                   FNETC     !*SB**2013
-
->>>>>>> .merge-right.r61
       REAL, DIMENSION(   0:ktep1 ), INTENT(INOUT) ::        &
                                                      HTR  
 
@@ -6280,19 +6191,8 @@ CONTAINS
 ! LOCAL VAR
 
       REAL, DIMENSION(   0:ktep1 )              ::        &
-<<<<<<< .working
-=======
-                                                TOTUCLFL, &
-                                                TOTDCLFL
-
-!      REAL, DIMENSION(   0:ktep1 )              ::        &
-!                                                    FNET, &
-!                                                   FNETC, &
-      REAL, DIMENSION(   0:ktep1 )              ::        &
-<<<<<<< .working
->>>>>>> .merge-right.r61
-=======
->>>>>>> .merge-right.r61
+                                                    FNET, &
+                                                   FNETC, &
                                                     HTRC
 
       INTEGER :: kk

@@ -790,17 +790,9 @@ CONTAINS
           GSW(i,j)    = 0.
           swcf(i,j)   = 0.
         else
-<<<<<<< .working
-<<<<<<< .working
           RSWTOA(i,j) = flx(i,kts) - flxd(i,kts)
           GSW(i,j)    = (1. - rsuvbm(i)) * flxd(i,kte+1)
           swcf(i,j)   = flx(i,kts) - flc(i,kts)
-=======
-          RSWTOA(i,j) = flx(i,kts) - flxd(i,kts) * SOLCON * cosz(i)
->>>>>>> .merge-right.r61
-=======
-          RSWTOA(i,j) = flx(i,kts) - flxd(i,kts) * SOLCON * cosz(i)
->>>>>>> .merge-right.r61
         endif
       end do
 !

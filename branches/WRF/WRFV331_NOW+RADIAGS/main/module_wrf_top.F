@@ -26,7 +26,6 @@ MODULE module_wrf_top
 
    USE module_cpl, ONLY : coupler_on, cpl_finalize, cpl_defdomain
 
->>>>>>> .merge-right.r61
    IMPLICIT NONE
 
    REAL    :: time
@@ -457,14 +456,6 @@ CONTAINS
          CALL WRFU_Finalize
          CALL wrf_shutdown
       ENDIF
-=======
-      IF (coupler_on) THEN 
-         CALL cpl_finalize() 
-      ELSE
-         CALL WRFU_Finalize
-         CALL wrf_shutdown
-      ENDIF
->>>>>>> .merge-right.r61
    ENDIF
 
    END SUBROUTINE wrf_finalize
