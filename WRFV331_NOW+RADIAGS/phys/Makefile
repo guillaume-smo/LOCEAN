@@ -526,6 +526,7 @@ module_surface_driver.o: \
 		../frame/module_configure.o \
 		../frame/module_cpl.o \
 		../share/module_model_constants.o  
+		../share/module_model_constants.o  
 
 module_diagnostics.o: ../frame/module_dm.o
 

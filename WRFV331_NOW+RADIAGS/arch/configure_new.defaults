@@ -767,8 +767,6 @@ CC_TOOLS        =      $(SCC)
 ###########################################################
 #ARCH    AIX xlf compiler with xlc #serial smpar dmpar dm+sm
 #
-<<<<<<< .working
-=======
 PRISM_ROOT_DIR  =       /workgpfs/rech/eee/reee217/sinext/models/oasis3/AIX6
 CHAN            =       MPI1
 DMPARALLEL      =       # 1

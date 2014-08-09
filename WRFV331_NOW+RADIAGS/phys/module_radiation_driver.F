@@ -851,25 +851,12 @@ CONTAINS
         CASE (RRTMSCHEME)
              CALL wrf_debug (100, 'CALL rrtm')
 
-<<<<<<< .working
              CALL RRTMLWRAD(RTHRATEN=RTHRATEN                       &
                  ,LWUPT=LWUPT,LWUPTC=LWUPTC                         &
                  ,LWDNT=LWDNT,LWDNTC=LWDNTC                         &
                  ,LWUPB=LWUPB,LWUPBC=LWUPBC                         &
                  ,LWDNB=LWDNB,LWDNBC=LWDNBC                         &
                  ,LWCF=LWCF,GLW=GLW,OLR=RLWTOA,EMISS=EMISS          &
-=======
-             CALL RRTMLWRAD(                                        &
-<<<<<<< .working
-                  RTHRATEN=RTHRATEN,GLW=GLW                         & 
-                 ,NETLW=NETLW,NETLWC=NETLWC                         & !*SB**2013
-                 ,OLR=RLWTOA,EMISS=EMISS                            &
->>>>>>> .merge-right.r61
-=======
-                  RTHRATEN=RTHRATEN,GLW=GLW                         & 
-                 ,NETLW=NETLW,NETLWC=NETLWC                         & !*SB**2013
-                 ,OLR=RLWTOA,EMISS=EMISS                            &
->>>>>>> .merge-right.r61
                  ,QV3D=QV                                           &
                  ,QC3D=QC                                           &
                  ,QR3D=QR                                           &

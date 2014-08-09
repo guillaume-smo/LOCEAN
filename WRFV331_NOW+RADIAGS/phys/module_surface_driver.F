@@ -22,19 +22,9 @@ CONTAINS
      &          ,th10,th2,thz0,th_phy,tmn,tshltr,tsk,tslb             &
      &          ,tyr,tyra,tdly,tlag,lagday,nyear,nday,tmn_update,yr   &
      &          ,t_phy,u10,udrunoff,ust,uz0,u_frame,u_phy,v10,vegfra  &
-<<<<<<< .working
-<<<<<<< .working
-     &          ,vz0,v_frame,v_phy,warm_rain,wspd,xice,xland,z,znt,zs &
-=======
      &          ,uoce,voce                                            &
      &          ,vz0,v_frame,v_phy,warm_rain,wspd,xice,xland,z,znt,zs &
      &          ,max_edom,cplmask,id                                  &
->>>>>>> .merge-right.r61
-=======
-     &          ,uoce,voce                                            &
-     &          ,vz0,v_frame,v_phy,warm_rain,wspd,xice,xland,z,znt,zs &
-     &          ,max_edom,cplmask,id                                  &
->>>>>>> .merge-right.r61
 #if (NMM_CORE==1)
      &          ,xicem,isice,iswater,ct,tke_pbl,sfenth                &
 #else
@@ -64,14 +54,7 @@ CONTAINS
      &          ,cmr_sfcdif,chr_sfcdif,cmc_sfcdif,chc_sfcdif          &
      &          , ids,ide,jds,jde,kds,kde                             &
      &          , ims,ime,jms,jme,kms,kme                             &
-<<<<<<< .working
-<<<<<<< .working
-=======
      &          , ips,ipe,jps,jpe,kps,kpe                             &
->>>>>>> .merge-right.r61
-=======
-     &          , ips,ipe,jps,jpe,kps,kpe                             &
->>>>>>> .merge-right.r61
      &          , i_start,i_end,j_start,j_end,kts,kte,num_tiles       &
              !  Optional moisture tracers
      &           ,qv_curr, qc_curr, qr_curr                           &
@@ -184,14 +167,7 @@ CONTAINS
    USE module_sf_sfcdiags_ruclsm
    USE module_sf_sstskin
    USE module_sf_tmnupdate
-<<<<<<< .working
-<<<<<<< .working
-=======
    USE module_cpl, ONLY : coupler_on, cpl_rcv
->>>>>>> .merge-right.r61
-=======
-   USE module_cpl, ONLY : coupler_on, cpl_rcv
->>>>>>> .merge-right.r61
 !
 !  This driver calls subroutines for the surface parameterizations.
 !
@@ -259,16 +235,8 @@ CONTAINS
 !-- TLAG          mean surface temperature of previous 140 days (K)
 !-- TDLY          accumulated daily mean surface temperature of the current day (K)
 !-- XLAND         land mask (1 for land, 2 for water)
-<<<<<<< .working
-<<<<<<< .working
-=======
 !-- MAX_EDOM      number of external model domains
 !-- CPLMASK       coupling mask (0 for data read in wrflowinput, 1 data received from the coupler)
->>>>>>> .merge-right.r61
-=======
-!-- MAX_EDOM      number of external model domains
-!-- CPLMASK       coupling mask (0 for data read in wrflowinput, 1 data received from the coupler)
->>>>>>> .merge-right.r61
 !-- ZNT           time-varying roughness length (m)
 !-- Z0            background roughness length (m)
 !-- MAVAIL        surface moisture availability (between 0 and 1)
@@ -376,14 +344,7 @@ CONTAINS
    INTEGER, INTENT(IN) ::                                             &
      &           ids,ide,jds,jde,kds,kde                              &
      &          ,ims,ime,jms,jme,kms,kme                              &
-<<<<<<< .working
-<<<<<<< .working
-=======
      &          ,ips,ipe,jps,jpe,kps,kpe                              &
->>>>>>> .merge-right.r61
-=======
-     &          ,ips,ipe,jps,jpe,kps,kpe                              &
->>>>>>> .merge-right.r61
      &          ,kts,kte,num_tiles
 
    INTEGER, INTENT(IN)::   FRACTIONAL_SEAICE
@@ -441,18 +402,9 @@ CONTAINS
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT)::   VEGFRA
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT )::   XICE
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT)::   XLAND
-<<<<<<< .working
-<<<<<<< .working
-=======
    INTEGER,                              INTENT(IN   )::   MAX_EDOM
    INTEGER,                              INTENT(IN   )::   id
    REAL, DIMENSION( ims:ime , 1:max_edom, jms:jme ), INTENT(IN   ), OPTIONAL ::   CPLMASK
->>>>>>> .merge-right.r61
-=======
-   INTEGER,                              INTENT(IN   )::   MAX_EDOM
-   INTEGER,                              INTENT(IN   )::   id
-   REAL, DIMENSION( ims:ime , 1:max_edom, jms:jme ), INTENT(IN   ), OPTIONAL ::   CPLMASK
->>>>>>> .merge-right.r61
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT)::   XICEM
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT)::   MAVAIL
    REAL, DIMENSION( ims:ime , jms:jme ), INTENT(INOUT)::   SNOALB
@@ -812,41 +764,8 @@ CONTAINS
 !
 
 
-<<<<<<< .working
-<<<<<<< .working
   if (sf_sfclay_physics .eq. 0) return
-=======
-  if (sf_sfclay_physics .eq. 0) return
->>>>>>> .merge-right.r61
 
-<<<<<<< .working
-=======
-  if (sf_sfclay_physics .eq. 0) return
-=======
-  IF ( coupler_on .and. present(cplmask) .and. present(sst_input) ) THEN
-     
-     CALL cpl_rcv( id, 'SST',            &
-        &              ids, ide, jds, jde, kds, kde, &
-        &              ims, ime, jms, jme, kms, kme, &
-        &              ips, ipe, jps, jpe, kps, kpe, &
-        &              max_edom, cplmask, SST, SST_INPUT )
-     
-     CALL cpl_rcv( id, 'UOCE',            &
-        &              ids, ide, jds, jde, kds, kde, &
-        &              ims, ime, jms, jme, kms, kme, &
-        &              ips, ipe, jps, jpe, kps, kpe, &
-        &              max_edom, cplmask, UOCE )
-     
-     CALL cpl_rcv( id, 'VOCE',            &
-        &              ids, ide, jds, jde, kds, kde, &
-        &              ims, ime, jms, jme, kms, kme, &
-        &              ips, ipe, jps, jpe, kps, kpe, &
-        &              max_edom, cplmask, VOCE )
-     
-  END IF
->>>>>>> .merge-right.r61
-
-<<<<<<< .working
   IF ( coupler_on .and. present(cplmask) .and. present(sst_input) ) THEN
      
      CALL cpl_rcv( id, 'SST',            &
@@ -869,9 +788,6 @@ CONTAINS
      
   END IF
 
->>>>>>> .merge-right.r61
-=======
->>>>>>> .merge-right.r61
   if ( fractional_seaice == 0 ) then
      xice_threshold = 0.5
   else if ( fractional_seaice == 1 ) then

@@ -29,13 +29,9 @@ MODULES =       module_driver_constants.o  \
                 module_comm_nesting_dm.o   \
                 module_dm.o                \
                 module_quilt_outbuf_ops.o  \
-<<<<<<< .working
-                module_io_quilt.o
-=======
                 module_io_quilt.o          \
 		module_cpl.o               \
 		module_cpl_oasis3.o
->>>>>>> .merge-right.r61
 ALOBJS =\
                 module_alloc_space_0.o       \
                 module_alloc_space_1.o       \
@@ -203,9 +199,6 @@ module_dm.o: module_machine.o module_state_description.o module_wrf_error.o \
 		module_driver_constants.o \
 		module_timing.o \
 		module_comm_nesting_dm.o \
-<<<<<<< .working
-		module_configure.o module_comm_dm.o
-=======
 		module_configure.o module_comm_dm.o  \
                 module_cpl.o
 
@@ -280,9 +273,6 @@ module_io_quilt.o: module_state_description.o \
                 module_dm.o \
                 module_configure.o \
 		module_internal_header_util.o \
-<<<<<<< .working
-		module_quilt_outbuf_ops.o 
-=======
 		module_quilt_outbuf_ops.o  \
                 module_cpl.o 
 
@@ -322,5 +312,4 @@ module_cpl.o: ../share/module_model_constants.o \
 module_cpl_oasis3.o: module_driver_constants.o \
                      module_domain.o
 
->>>>>>> .merge-right.r61
 # DO NOT DELETE
