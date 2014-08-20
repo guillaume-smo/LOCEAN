@@ -344,14 +344,14 @@ CONTAINS
                acswdnb(i,j)  = 0.
                acswdnbc(i,j) = 0.
             ENDIF
-            acswupt(i,j)  = acswupt(i,j) + swupt(i,j)
-            acswuptc(i,j) = acswuptc(i,j) + swuptc(i,j)
-            acswdnt(i,j)  = acswdnt(i,j) + swdnt(i,j)
-            acswdntc(i,j) = acswdntc(i,j) + swdntc(i,j)
-            acswupb(i,j)  = acswupb(i,j) + swupb(i,j)
-            acswupbc(i,j) = acswupbc(i,j) + swupbc(i,j)
-            acswdnb(i,j)  = acswdnb(i,j) + swdnb(i,j)
-            acswdnbc(i,j) = acswdnbc(i,j) + swdnbc(i,j)
+            acswupt(i,j)  = acswupt(i,j) + swupt(i,j)*dt
+            acswuptc(i,j) = acswuptc(i,j) + swuptc(i,j)*dt
+            acswdnt(i,j)  = acswdnt(i,j) + swdnt(i,j)*dt
+            acswdntc(i,j) = acswdntc(i,j) + swdntc(i,j)*dt
+            acswupb(i,j)  = acswupb(i,j) + swupb(i,j)*dt
+            acswupbc(i,j) = acswupbc(i,j) + swupbc(i,j)*dt
+            acswdnb(i,j)  = acswdnb(i,j) + swdnb(i,j)*dt
+            acswdnbc(i,j) = acswdnbc(i,j) + swdnbc(i,j)*dt
          ENDDO
          ENDDO
       ENDIF
@@ -369,14 +369,14 @@ CONTAINS
                aclwdnb(i,j)  = 0.
                aclwdnbc(i,j) = 0.
             ENDIF
-            aclwupt(i,j)  = aclwupt(i,j) + lwupt(i,j)
-            aclwuptc(i,j) = aclwuptc(i,j) + lwuptc(i,j)
-            aclwdnt(i,j)  = aclwdnt(i,j) + lwdnt(i,j)
-            aclwdntc(i,j) = aclwdntc(i,j) + lwdntc(i,j)
-            aclwupb(i,j)  = aclwupb(i,j) + lwupb(i,j)
-            aclwupbc(i,j) = aclwupbc(i,j) + lwupbc(i,j)
-            aclwdnb(i,j)  = aclwdnb(i,j) + lwdnb(i,j)
-            aclwdnbc(i,j) = aclwdnbc(i,j) + lwdnbc(i,j)
+            aclwupt(i,j)  = aclwupt(i,j) + lwupt(i,j)*dt
+            aclwuptc(i,j) = aclwuptc(i,j) + lwuptc(i,j)*dt
+            aclwdnt(i,j)  = aclwdnt(i,j) + lwdnt(i,j)*dt
+            aclwdntc(i,j) = aclwdntc(i,j) + lwdntc(i,j)*dt
+            aclwupb(i,j)  = aclwupb(i,j) + lwupb(i,j)*dt
+            aclwupbc(i,j) = aclwupbc(i,j) + lwupbc(i,j)*dt
+            aclwdnb(i,j)  = aclwdnb(i,j) + lwdnb(i,j)*dt
+            aclwdnbc(i,j) = aclwdnbc(i,j) + lwdnbc(i,j)*dt
          ENDDO
          ENDDO
       ENDIF
