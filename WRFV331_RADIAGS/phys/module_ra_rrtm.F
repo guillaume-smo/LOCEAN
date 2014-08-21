@@ -1813,7 +1813,7 @@ CONTAINS
                                                             QS1D, &
                                                             QG1D
 !
-   REAL, DIMENSION( kts:kte ) ::                     FLUP, FLUPC, &
+   REAL, DIMENSION( 2 ) ::                           FLUP, FLUPC, &
                                                      FLDN, FLDNC
 !
    REAL   ::                               TSFC,GLW0,OLR0,EMISS0
@@ -1844,11 +1844,12 @@ CONTAINS
             QI1D(K)=0.
             QS1D(K)=0.
             CLDFRA1D(K)=0.
-            FLUP(K)=0.
-            FLUPC(K)=0.
-            FLDN(K)=0.
-            FLDNC(K)=0.
          ENDDO
+
+         FLUP(:)=0.
+         FLUPC(:)=0.
+         FLDN(:)=0.
+         FLDNC(:)=0.
 
          DO K=kts,kte
             NK=kme-1-K+kms
@@ -1960,14 +1961,14 @@ CONTAINS
          lwcf(i,j) = flupc(kte) - flup(kte)
 
          IF(PRESENT(LWUPT))THEN
-           lwupt(i,j)  = flup(kte)
-           lwuptc(i,j) = flupc(kte)
-           lwdnt(i,j)  = fldn(kte)
-           lwdntc(i,j) = fldnc(kte)
-           lwupb(i,j)  = flup(kts)
-           lwupbc(i,j) = flupc(kts)
-           lwdnb(i,j)  = fldn(kts)
-           lwdnbc(i,j) = fldnc(kts)
+           lwupt(i,j)  = flup(2)
+           lwuptc(i,j) = flupc(2)
+           lwdnt(i,j)  = fldn(2)
+           lwdntc(i,j) = fldnc(2)
+           lwupb(i,j)  = flup(1)
+           lwupbc(i,j) = flupc(1)
+           lwdnb(i,j)  = fldn(1)
+           lwdnbc(i,j) = fldnc(1)
          ENDIF
  
          DO K=kts,kte
@@ -2063,7 +2064,7 @@ CONTAINS
 !
       REAL, INTENT(INOUT)  ::                          TSFC,GLW,OLR
 !
-	   REAL, DIMENSION( kts:kte ), INTENT(INOUT) ::      FLUP, FLUPC, &
+	   REAL, DIMENSION(2), INTENT(INOUT) ::              FLUP, FLUPC, &
                                                         FLDN, FLDNC
 
 ! LOCAL VAR
@@ -2244,10 +2245,15 @@ CONTAINS
               TTEN(K)=HTR(kte-k)/86400. 
  2450      continue                                                              
 !
-           FLUP(:)  = TOTUFLUX(kts:kte)
-           FLDN(:)  = TOTDFLUX(kts:kte)
-           FLUPC(:) = TOTUCLFL(kts:kte)
-           FLDNC(:) = TOTDCLFL(kts:kte)
+           FLUP(1)  = TOTUFLUX(0)
+           FLDN(1)  = TOTDFLUX(0)
+           FLUPC(1) = TOTUCLFL(0)
+           FLDNC(1) = TOTDCLFL(0)
+!
+           FLUP(2)  = TOTUFLUX(kte)
+           FLDN(2)  = TOTDFLUX(kte)
+           FLUPC(2) = TOTUCLFL(kte)
+           FLDNC(2) = TOTDCLFL(kte)
 !
            GLW = TOTDFLUX(0)
            OLR = TOTUFLUX(NLAYERS)
@@ -6416,24 +6422,11 @@ CONTAINS
             RADLD(IPR) = RADLD(IPR) + (BBD - RADLD(IPR)) *     & 
                          ABSS(INDEX)                                             
             DRAD = DRAD + RADLD(IPR)                                             
- 2100    CONTINUE                                                                
-!     Set clear sky stream to total sky stream as long as layers                 
-!     remain clear.  Streams diverge when a cloud is reached.                    
-            IF (ICLDDN.EQ.1) THEN                                                
-         DO 2200 IPR = 1, NGPT                                                   
-               RADCLRD(IPR) = RADCLRD(IPR) + (BBD - RADCLRD(IPR)) *   & 
-                              ABSS(INDEX)                                        
-               CLRDRAD = CLRDRAD + RADCLRD(IPR)                                  
- 2200    CONTINUE                                                                
-            ELSE                                                                 
-         DO 2300 IPR = 1, NGPT                                                   
-               RADCLRD(IPR) = RADLD(IPR)                                         
-               CLRDRAD = DRAD                                                    
- 2300    CONTINUE                                                                
-            ENDIF                                                                
-                                                                                 
-! 2100    CONTINUE                                                               
-                                                                                 
+            RADCLRD(IPR) = RADCLRD(IPR) + (BBD - RADCLRD(IPR)) *   & 
+                         ABSS(INDEX)                                        
+            CLRDRAD = CLRDRAD + RADCLRD(IPR)                                  
+ 2100     CONTINUE                                                                
+
          ENDIF                                                                   
                                                                                  
          TOTDFLUX(LEV-1) = DRAD * WTNUM                                          
