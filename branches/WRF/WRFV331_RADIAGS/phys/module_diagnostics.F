@@ -18,7 +18,7 @@ CONTAINS
                      ,ACSWUPB,ACSWUPBC,ACSWDNB,ACSWDNBC               & ! Optional
                      ,ACLWUPT,ACLWUPTC,ACLWDNT,ACLWDNTC               & ! Optional
                      ,ACLWUPB,ACLWUPBC,ACLWDNB,ACLWDNBC               & ! Optional
-!                     ,I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC       & ! Optional
+!                     ,I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC       & ! Optional (GS: radiative bucket_J not used anymore)
 !                     ,I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC       & ! Optional
 !                     ,I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC       & ! Optional
 !                     ,I_ACLWUPB,I_ACLWUPBC,I_ACLWDNB,I_ACLWDNBC       & ! Optional
@@ -135,7 +135,7 @@ CONTAINS
                       ACSWUPB,ACSWUPBC,ACSWDNB,ACSWDNBC,          &
                       ACLWUPT,ACLWUPTC,ACLWDNT,ACLWDNTC,          &
                       ACLWUPB,ACLWUPBC,ACLWDNB,ACLWDNBC
-!   INTEGER, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
+!   INTEGER, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::& (GS: radiative bucket not used anymore)
 !                      I_ACSWUPT,I_ACSWUPTC,I_ACSWDNT,I_ACSWDNTC,  &
 !                      I_ACSWUPB,I_ACSWUPBC,I_ACSWDNB,I_ACSWDNBC,  &
 !                      I_ACLWUPT,I_ACLWUPTC,I_ACLWDNT,I_ACLWDNTC,  &
@@ -194,6 +194,7 @@ CONTAINS
       ENDDO      
       ENDDO
 
+! GS: radiative bucket_J not used anymore
 !      IF (xtime .eq. 0.0 .and. bucket_J .gt. 0.0 .and. PRESENT(ACSWUPT))THEN
 !        DO j=j_start(ij),j_end(ij)
 !        DO i=i_start(ij),i_end(ij)
@@ -331,6 +332,7 @@ CONTAINS
       ENDDO     
       ENDDO     
 
+      ! GS: add accumulated radiatives fluxes computation here
       IF ( PRESENT(ACSWUPT) )THEN
          DO j=j_start(ij),j_end(ij)
          DO i=i_start(ij),i_end(ij)

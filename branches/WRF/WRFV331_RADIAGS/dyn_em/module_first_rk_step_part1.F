@@ -224,6 +224,7 @@ BENCH_END(phy_prep_tim)
          ENDIF
 
 ! this driver is only needed to handle non-local shadowing effects
+      CALL wrf_debug ( 200 , ' call pre_radiation_driver' )
       CALL pre_radiation_driver ( grid, config_flags                        &
      &        ,itimestep=grid%itimestep, ra_call_offset=grid%ra_call_offset    &
      &        ,XLAT=grid%xlat, XLONG=grid%xlong, GMT=grid%gmt                  &

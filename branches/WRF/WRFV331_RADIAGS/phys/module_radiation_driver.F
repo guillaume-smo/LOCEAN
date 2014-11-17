@@ -1136,8 +1136,10 @@ CONTAINS
         CASE (SWRADSCHEME)
              CALL wrf_debug(100, 'CALL swrad')
              CALL SWRAD(                                               &
-                     DT=dt,RTHRATEN=rthraten,GSW=gsw                   &
-                    ,XLAT=xlat,XLONG=xlong,ALBEDO=albedo               &
+                     DT=dt,RTHRATEN=rthraten                           &
+                    ,SWDNT=SWDNT,SWDNTC=SWDNTC                         &
+                    ,SWDNB=SWDNB,SWDNBC=SWDNBC                         &
+                    ,GSW=gsw,XLAT=xlat,XLONG=xlong,ALBEDO=albedo       &
 #ifdef WRF_CHEM
                     ,PM2_5_DRY=pm2_5_dry,PM2_5_WATER=pm2_5_water       &
                     ,PM2_5_DRY_EC=pm2_5_dry_ec                         &
