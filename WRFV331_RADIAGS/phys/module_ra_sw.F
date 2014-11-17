@@ -7,7 +7,8 @@ MODULE module_ra_sw
 CONTAINS
 
 !------------------------------------------------------------------
-   SUBROUTINE SWRAD(dt,RTHRATEN,GSW,XLAT,XLONG,ALBEDO,            &
+   SUBROUTINE SWRAD(dt,RTHRATEN,SWDNT,SWDNTC,SWDNB,SWDNBC,        &
+                    GSW,XLAT,XLONG,ALBEDO,                        &
                     rho_phy,T3D,QV3D,QC3D,QR3D,                   &
                     QI3D,QS3D,QG3D,P3D,pi3D,dz8w,GMT,             &
                     R,CP,G,JULDAY,                                &
@@ -75,9 +76,16 @@ CONTAINS
                                                             QG3D
 
    LOGICAL, OPTIONAL, INTENT(IN )      ::        F_QV,F_QC,F_QR,F_QI,F_QS,F_QG
+
+   !GS: add additional radiative disgnostics
+   REAL, DIMENSION( ims:ime, jms:jme ),                           &
+         OPTIONAL,                                                &
+         INTENT(INOUT)  ::                                        &
+                                       SWDNT,SWDNTC,SWDNB,SWDNBC
  
 ! LOCAL VARS
- 
+
+   REAL, DIMENSION( kts:kte+1 ) ::                  SDOWN,SCDOWN
    REAL, DIMENSION( kts:kte ) ::                                  &
                                                           TTEN1D, &
                                                           RHO01D, &
@@ -91,7 +99,7 @@ CONTAINS
                                                             QS1D, &
                                                             QG1D
 !
-   REAL::      XLAT0,XLONG0,ALB0,GSW0
+   REAL::      XLAT0,XLONG0,ALB0,GSW0,COSZ
 
 !
    INTEGER :: i,j,K,NK
@@ -215,14 +223,31 @@ CONTAINS
          XLAT0=XLAT(I,J)
          XLONG0=XLONG(I,J)
          ALB0=ALBEDO(I,J)
+
 ! slope code removed - factor now done in surface driver
-           CALL SWPARA(TTEN1D,GSW0,XLAT0,XLONG0,ALB0,              &
+           CALL SWPARA(TTEN1D,SDOWN,SCDOWN,GSW0,COSZ,XLAT0,XLONG0,ALB0, &
                        T1D,QV1D,QC1D,QR1D,QI1D,QS1D,QG1D,P1D,      &
                        XTIME,GMT,RHO01D,DZ,                        &
                        R,CP,G,DECLIN,SOLCON,                       &
                        RADFRQ,ICLOUD,DEGRAD,aer_dry1,aer_water1,   &
                        kts,kte      )
+
          GSW(I,J)=GSW0
+
+         IF(PRESENT(SWDNT))THEN
+           if (cosz .le. 1.e-9) then
+             swdnt(i,j)     = 0.
+             swdntc(i,j)    = 0.
+             swdnb(i,j)     = 0.
+             swdnbc(i,j)    = 0.
+           else
+             SWDNT(I,J)     = SDOWN(1)
+             SWDNTC(I,J)    = SCDOWN(1)
+             SWDNB(I,J)     = SDOWN(kte)
+             SWDNBC(I,J)    = SCDOWN(kte)
+           endif
+         endif
+
          DO K=kts,kte          
             NK=kme-1-K+kms
             RTHRATEN(I,K,J)=RTHRATEN(I,K,J)+TTEN1D(NK)/pi3D(I,K,J)
@@ -234,10 +259,10 @@ CONTAINS
    END SUBROUTINE SWRAD
 
 !------------------------------------------------------------------
-   SUBROUTINE SWPARA(TTEN,GSW,XLAT,XLONG,ALBEDO,                  &
-                     T,QV,QC,QR,QI,QS,QG,P,            		  &
-                     XTIME, GMT, RHO0, DZ,             		  &
-                     R,CP,G,DECLIN,SOLCON,             		  &
+   SUBROUTINE SWPARA(TTEN,SDOWN,SCDOWN,GSW,CSZA,XLAT,XLONG,   &
+                     ALBEDO,T,QV,QC,QR,QI,QS,QG,P,            &
+                     XTIME, GMT, RHO0, DZ,                    &
+                     R,CP,G,DECLIN,SOLCON,                    &
                      RADFRQ,ICLOUD,DEGRAD,aer_dry1,aer_water1,    &
                      kts,kte,slope_rad,shadow,slp_azi,slope       )
 !------------------------------------------------------------------
@@ -272,7 +297,10 @@ CONTAINS
                                                   RADFRQ, DEGRAD
 !
    INTEGER, INTENT(IN) :: icloud
-   REAL, INTENT(INOUT)  ::                                   GSW
+   REAL, INTENT(INOUT) ::                             CSZA, GSW
+   REAL, DIMENSION( kts:kte+1 ), INTENT(INOUT)::  SDOWN, SCDOWN !GS: add SCDOWN (clear-sky downward SW)
+
+
 ! For slope-dependent radiation
 
    INTEGER, OPTIONAL, INTENT(IN) :: slope_rad,shadow
@@ -280,8 +308,6 @@ CONTAINS
 
 ! LOCAL VARS
 !
-   REAL, DIMENSION( kts:kte+1 ) ::                         SDOWN
-
    REAL, DIMENSION( kts:kte )   ::                          XLWP, &
 						            XATP, &
 						            XWVP, &
@@ -311,10 +337,10 @@ CONTAINS
 
       DATA XMUVAL/0.,0.2,0.5,1.0/
 
-      REAL :: bext340, absc, alba, alw, csza,dabsa,dsca,dabs
+      REAL :: bext340, absc, alba, alw, dabsa,dsca,dabs
       REAL :: bexth2o, dscld, hrang,ff,oldalb,oldabs,oldabc
       REAL :: soltop, totabs, tloctm, ugcm, uv,xabs,xabsa,wv
-      REAL :: wgm, xalb, xi, xsca, xt24,xmu,xabsc,trans0,yj
+      REAL :: wgm, xalb, xi, xsca, xt24,xmu,xabsc,trans0,tranc0,yj !GS: add tranc0 (clear-sky transmissivity)
       REAL :: xxlat,ww
       INTEGER :: iil,ii,jjl,ju,k,iu
 
@@ -362,6 +388,7 @@ CONTAINS
 !
       XMU=CSZA
       SDOWN(1)=SOLTOP*XMU
+      SCDOWN(1)=SDOWN(1)
 !     SET WW (G/M**2) LIQUID WATER PATH INTEGRATED DOWN
 !     SET UV (G/M**2) WATER VAPOR PATH INTEGRATED DOWN
       WW=0.
@@ -390,7 +417,7 @@ CONTAINS
          TOTABS=2.9*UGCM/((1.+141.5*UGCM)**0.635+5.925*UGCM)
 !     APPROXIMATE RAYLEIGH + AEROSOL SCATTERING
 !        XSCA=1.E-5*XATP(K)/XMU
-!          XSCA=(1.E-5*XATP(K)+aer_dry1(K)*bext340+aer_water1(K)*bexth2o)/XMU
+!        XSCA=(1.E-5*XATP(K)+aer_dry1(K)*bext340+aer_water1(K)*bexth2o)/XMU
          beta=0.4*(1.0-XMU)+0.1
 !     CSSCA - CLEAR-SKY SCATTERING SET FROM NAMELIST SWRAD_SCAT
          XSCA=(cssca*XATP(K)+beta*aer_dry1(K)*bext340*DZ(K) &
@@ -434,13 +461,16 @@ CONTAINS
          IF(XALB.LT.0.)XALB=0.
          IF(XABSC.LT.0.)XABSC=0.
          DSCLD=DSCLD+(XALB+XABSC)*SDOWN(K)*0.01
-         DSCA=DSCA+XSCA*SDOWN(K)
-         DABS=DABS+XABS*SDOWN(K)
-         DABSA=DABSA+XABSA*SDOWN(K)
+         DSCA=DSCA+XSCA*SDOWN(K)    ! CLEAR AIR SCATTERING
+         DABS=DABS+XABS*SDOWN(K)    ! VAPOR ABSORPTION
+         DABSA=DABSA+XABSA*SDOWN(K) ! AEROSOL ABSORPTION
          OLDALB=ALBA
          OLDABC=ABSC
 !     LAYER TRANSMISSIVITY
          TRANS0=100.-XALB-XABSC-XABS*100.-XSCA*100.
+!     GS: CLEAR-SKY LAYER TRANSMISSIVITY
+         TRANC0=100.-XABS*100.-XSCA*100. ! VAPOR ABSORPTION & CLEAR-AIR SCATTERING ONLY
+
          IF(TRANS0.LT.1.)THEN
            FF=99./(XALB+XABSC+XABS*100.+XSCA*100.)
            XALB=XALB*FF
@@ -449,7 +479,17 @@ CONTAINS
            XSCA=XSCA*FF
            TRANS0=1.
          ENDIF
+
+!     GS: ADAPTATION BETE & MECHANTE
+         IF(TRANC0.LT.1.)THEN
+           FF=99./(XABS*100.+XSCA*100.)
+           XABS=XABS*FF
+           XSCA=XSCA*FF
+           TRANC0=1.
+         ENDIF
+
          SDOWN(K+1)=AMAX1(1.E-9,SDOWN(K)*TRANS0*0.01)
+         SCDOWN(K+1)=AMAX1(1.E-9,SCDOWN(K)*TRANC0*0.01)
          TTEN(K)=SDOWN(K)*(XABSC+XABS*100.+XABSA*100.)*0.01/( &
                  RO(K)*CP*DZ(K))
   200   CONTINUE

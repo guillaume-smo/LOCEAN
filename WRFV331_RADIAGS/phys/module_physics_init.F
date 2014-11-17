@@ -1197,6 +1197,7 @@ integer myproc
                          ids, ide, jds, jde, kds, kde,     &
                          ims, ime, jms, jme, kms, kme,     &
                          its, ite, jts, jte, kts, kte      )
+             acswalloc = .true.
 
         CASE (CAMSWSCHEME)
 #ifdef MAC_KLUDGE
