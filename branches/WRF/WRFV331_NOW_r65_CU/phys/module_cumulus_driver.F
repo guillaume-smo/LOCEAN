@@ -587,9 +587,8 @@ CONTAINS
                ,IMS=ims,IME=ime,JMS=jms,JME=jme,KMS=kms,KME=kme &
                ,ITS=its,ITE=ite,JTS=jts,JTE=jte,KTS=kts,KTE=kte &
               ! optionals
-               ,RTHCUTEN=rthcuten ,RQVCUTEN=rqvcuten            &
-               ,QWAT3D=QC_CU                                    &
-                                                                )
+               ,RTHCUTEN=rthcuten ,RQVCUTEN=rqvcuten            )!&
+               !,QWAT3D=QC_CU                                   )
 
      CASE (KFETASCHEME)
           CALL wrf_debug(100,'in kf_eta_cps')
