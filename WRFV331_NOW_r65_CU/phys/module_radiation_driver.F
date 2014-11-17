@@ -62,14 +62,6 @@ CONTAINS
               , QS, F_QS                     &
               , QG, F_QG                     &
               , QNDROP, F_QNDROP    &
-!              ,ACSWUPT   ,ACSWUPTC            &
-!              ,ACSWDNT   ,ACSWDNTC            &
-!              ,ACSWUPB   ,ACSWUPBC            &
-!              ,ACSWDNB   ,ACSWDNBC            &
-!              ,ACLWUPT   ,ACLWUPTC            &
-!              ,ACLWDNT   ,ACLWDNTC            &
-!              ,ACLWUPB   ,ACLWUPBC            &
-!              ,ACLWDNB   ,ACLWDNBC            &
               ,SWUPT ,SWUPTC                  &
               ,SWDNT ,SWDNTC                  &
               ,SWUPB ,SWUPBC                  &
@@ -369,8 +361,10 @@ CONTAINS
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), OPTIONAL ,       &
          INTENT(IN ) ::  tauaer300,tauaer400,tauaer600,tauaer999, & ! jcb
                                  gaer300,gaer400,gaer600,gaer999, & ! jcb
-                                 waer300,waer400,waer600,waer999, & ! jcb
-                                 qc_cu, qi_cu
+                                 waer300,waer400,waer600,waer999    ! jcb
+
+   REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), OPTIONAL ,       &
+         INTENT(INOUT ) :: qc_cu, qi_cu
 
    REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), OPTIONAL ,       &
          INTENT(IN ) ::  tauaerlw1,tauaerlw2,tauaerlw3,tauaerlw4, & ! czhao 
@@ -396,22 +390,6 @@ CONTAINS
          INTENT(INOUT)  ::                              RTHRATEN, &
                                                       RTHRATENLW, &
                                                       RTHRATENSW
-
-!  REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), OPTIONAL ,       &
-!        INTENT(INOUT)  ::                                  SWUP, &
-!                                                           SWDN, &
-!                                                      SWUPCLEAR, &
-!                                                      SWDNCLEAR, &
-!                                                           LWUP, &
-!                                                           LWDN, &
-!                                                      LWUPCLEAR, &
-!                                                      LWDNCLEAR
-
-!   REAL, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
-!                      ACSWUPT,ACSWUPTC,ACSWDNT,ACSWDNTC,          &
-!                      ACSWUPB,ACSWUPBC,ACSWDNB,ACSWDNBC,          &
-!                      ACLWUPT,ACLWUPTC,ACLWDNT,ACLWDNTC,          &
-!                      ACLWUPB,ACLWUPBC,ACLWDNB,ACLWDNBC
 
 ! TOA and surface, upward and downward, total and clear fluxes
    REAL, DIMENSION( ims:ime, jms:jme ), OPTIONAL, INTENT(INOUT) ::&
@@ -705,14 +683,6 @@ CONTAINS
         RTHRATEN(I,K,J)=0.
         RTHRATENLW(I,K,J)=0.
         RTHRATENSW(I,K,J)=0.
-!        SWUP(I,K,J) = 0.0
-!        SWDN(I,K,J) = 0.0
-!        SWUPCLEAR(I,K,J) = 0.0
-!        SWDNCLEAR(I,K,J) = 0.0
-!        LWUP(I,K,J) = 0.0
-!        LWDN(I,K,J) = 0.0
-!        LWUPCLEAR(I,K,J) = 0.0
-!        LWDNCLEAR(I,K,J) = 0.0
         CEMISS(I,K,J)=0.0
      ENDDO
      ENDDO
@@ -734,32 +704,6 @@ CONTAINS
         ENDDO
         ENDDO
      ENDIF
-
-! temporarily modify hydrometeors (currently only done for GD scheme and WRF-Chem)
-!
-     IF ( PRESENT( cu_rad_feedback ) ) THEN
-       IF ( PRESENT( qc ) .AND. PRESENT( qc_cu ) .AND. cu_rad_feedback ) THEN
-          DO j=jts,jte
-          DO k=kts,kte
-          DO i=its,ite
-            qc_save(i,k,j) = qc(i,k,j)
-            qc(i,k,j) = qc(i,k,j) + qc_cu(i,k,j)
-          ENDDO
-          ENDDO
-          ENDDO
-       ENDIF
-       IF ( PRESENT( qi ) .AND. PRESENT( qi_cu ) .AND. cu_rad_feedback ) THEN
-          DO j=jts,jte
-          DO k=kts,kte
-          DO i=its,ite
-            qi_save(i,k,j) = qi(i,k,j)
-            qi(i,k,j) = qi(i,k,j) + qi_cu(i,k,j)
-          ENDDO
-          ENDDO
-          ENDDO
-       ENDIF
-     ENDIF
-
 
 ! Fill temporary water variable depending on micro package (tgs 25 Apr 2006)
      if(PRESENT(qc) .and. PRESENT(F_QC)) then
@@ -790,7 +734,7 @@ CONTAINS
      endif
 
 !---------------
-! Calculate constant for short wave radiation
+! Calculate constant for long wave radiation
 
      lwrad_cldfra_select: SELECT CASE(lw_physics)
 
@@ -831,10 +775,29 @@ CONTAINS
  
         CASE DEFAULT
 
+     !WRITE ( wrf_err_message , * ) 'CLDFRA_CU = ', PRESENT(CLDFRA_CU), &
+     !                              ', QC_CU = ', PRESENT( qc_cu ), &
+     !                              ', CU_RAD_FEEDBACK = ', cu_rad_feedback
+     !CALL wrf_debug (100, wrf_err_message )
+
+     !IF ( PRESENT( cu_rad_feedback ) ) THEN
+     IF ( PRESENT( CLDFRA_CU ) .AND. PRESENT( qc_cu )) THEN ! .AND. cu_rad_feedback ) THEN
+
+        CALL wrf_debug (100, 'CALL cal_qc_cu & cal_cldfra_cu')
+
+        CALL cal_qc_cu(  QC_CU, HTOP, HBOT, CUPPT,     &
+                         STEPRA, DT, DX, DY, Z, DZ8W,  &
+                         its, ite, jts, jte, kts, kte, &
+                         ims, ime, jms, jme, kms, kme  )
+
+
         CALL cal_cldfra_cu( CLDFRA_CU, HBOTR, HTOPR, CUPPT, &
                             HTOP, HBOT, DT, STEPRA,         &
                             its, ite, jts, jte, kts, kte,   &
                             ims, ime, jms, jme, kms, kme  )
+
+     ENDIF
+     !ENDIF
 
      IF ( PRESENT ( CLDFRA ) .AND.                          &
           PRESENT(F_QC) .AND. PRESENT ( F_QI ) ) THEN
@@ -846,6 +809,33 @@ CONTAINS
      ENDIF
 
      END SELECT lwrad_cldfra_select    
+
+
+! temporarily modify hydrometeors (currently only done for GD scheme and WRF-Chem)
+     !IF ( PRESENT( cu_rad_feedback ) ) THEN 
+       IF ( PRESENT( qc ) .AND. PRESENT( qc_cu ) ) THEN ! .AND. cu_rad_feedback ) THEN 
+          DO j=jts,jte
+          DO k=kts,kte
+          DO i=its,ite
+            qc_save(i,k,j) = qc(i,k,j)
+            qc(i,k,j) = qc(i,k,j) + qc_cu(i,k,j)
+            CLDFRA(i,k,j)=CLDFRA(i,k,j)+cldfra_cu(i,k,j)       ! New total cloud fraction
+            CLDFRA(i,k,j)=AMIN1(1.0,CLDFRA(i,k,j))
+          ENDDO
+          ENDDO
+          ENDDO
+       ENDIF
+       !IF ( PRESENT( qi ) .AND. PRESENT( qi_cu ) .AND. cu_rad_feedback ) THEN 
+       !   DO j=jts,jte
+       !   DO k=kts,kte
+       !   DO i=its,ite
+       !     qi_save(i,k,j) = qi(i,k,j)
+       !     qi(i,k,j) = qi(i,k,j) + qi_cu(i,k,j)
+       !   ENDDO
+       !   ENDDO
+       !   ENDDO
+       !ENDIF
+     !ENDIF
 
      lwrad_select: SELECT CASE(lw_physics)
 
@@ -1462,8 +1452,8 @@ CONTAINS
 
      ENDIF
 
-     IF ( PRESENT( cu_rad_feedback ) ) THEN
-       IF ( PRESENT( qc  ) .AND. PRESENT( qc_cu ) .AND. cu_rad_feedback ) THEN
+     !IF ( PRESENT( cu_rad_feedback ) ) THEN
+       IF ( PRESENT( qc  ) .AND. PRESENT( qc_cu ) ) THEN !.AND. cu_rad_feedback ) THEN
            DO j=jts,jte
            DO k=kts,kte
            DO i=its,ite
@@ -1472,16 +1462,16 @@ CONTAINS
            ENDDO
            ENDDO
         ENDIF
-        IF ( PRESENT( qi  ) .AND. PRESENT( qi_cu ) .AND. cu_rad_feedback ) THEN
-           DO j=jts,jte
-           DO k=kts,kte
-           DO i=its,ite
-             qi(i,k,j) = qi_save(i,k,j)
-           ENDDO
-           ENDDO
-           ENDDO
-        ENDIF
-      ENDIF
+        !IF ( PRESENT( qi  ) .AND. PRESENT( qi_cu ) .AND. cu_rad_feedback ) THEN
+        !   DO j=jts,jte
+        !   DO k=kts,kte
+        !   DO i=its,ite
+        !     qi(i,k,j) = qi_save(i,k,j)
+        !   ENDDO
+        !   ENDDO
+        !   ENDDO
+        !ENDIF
+      !ENDIF
 
    ENDDO
    !$OMP END PARALLEL DO
@@ -2063,6 +2053,63 @@ CONTAINS
     ENDDO          !--- End DO j
 
    END SUBROUTINE cal_cldfra2
+
+   SUBROUTINE cal_qc_cu( QC_CU, CUTOP, CUBOT, CUPPT,   &
+                         STEPRA, DT, DX, DY, Z, DZ8W,  &
+                         its, ite, jts, jte, kts, kte, &
+                         ims, ime, jms, jme, kms, kme  )
+
+     USE module_wrf_error , ONLY : wrf_err_message
+
+     IMPLICIT NONE 
+     INTEGER             :: i, j, k
+     INTEGER, INTENT(IN) :: its, ite, jts, jte, kts, kte, &
+                            ims, ime, jms, jme, kms, kme
+     INTEGER, INTENT(IN) :: STEPRA
+     REAL                :: ZCU !, ZCU_MAX, QC_SUM
+     REAL,    INTENT(IN) :: DX, DY, DT
+     REAL,    INTENT(IN),                                 &
+     DIMENSION( ims:ime, jms:jme) :: CUPPT, CUTOP, CUBOT
+     REAL,    INTENT(IN),                                 &
+     DIMENSION(ims:ime, kms:kme, jms:jme ) :: Z, DZ8W
+     REAL,    INTENT(INOUT),                              &
+     DIMENSION(ims:ime, kms:kme, jms:jme ) :: QC_CU
+
+     !ZCU_MAX = 0.
+
+     DO j = jts,jte
+     DO i = its,ite
+
+       IF ((CUTOP(i,j)-CUBOT(i,j).GT.1.0).AND.(CUPPT(i,j).GT.0.)) THEN
+         !QC_SUM = 0.
+         ZCU = Z(i,CUTOP(i,j),j) - Z(i,CUBOT(i,j),j)
+         !ZCU_MAX = MAX( ZCU_MAX, ZCU)
+         DO k = CUBOT(i,j),CUTOP(i,j)
+           QC_CU(i,k,j) = DZ8W(i,k,j) / ZCU * CUPPT(i,j) * 1000. / ZCU
+           !QC_SUM = QC_SUM + QC_CU(i,k,j)
+         ENDDO
+         !WRITE ( wrf_err_message , * ) 'VERIFICATION:'
+         !CALL wrf_debug (100, wrf_err_message )
+         !WRITE ( wrf_err_message , * ) 'CUPPT/ZCU = ', CUPPT(i,j) / ZCU * 1000.
+         !CALL wrf_debug (100, wrf_err_message )
+         !WRITE ( wrf_err_message , * ) 'SUM(CUPPT*ZCU(Z)) = ', QC_SUM
+         !CALL wrf_debug (100, wrf_err_message )
+       ENDIF
+
+       IF ((CUTOP(i,j)-CUBOT(i,j).GT.1.0).AND.(CUPPT(i,j).LT.1.E-7)) THEN
+         DO k = CUBOT(i,j),CUTOP(i,j)
+           !http://www.nco.ncep.noaa.gov/pmb/codes//nwprod/ngac.v1.0.0/sorc/ngac_fcst.fd/atmos/phys/module_RA_RRTM.F90
+           QC_CU(i,k,j) = 1.E-5
+         ENDDO
+       ENDIF
+
+     ENDDO
+     ENDDO
+
+     !WRITE ( wrf_err_message , * ) 'ZCU_MAX = ',ZCU_MAX
+     !CALL wrf_debug (100, wrf_err_message )
+
+   END SUBROUTINE
 
 
    SUBROUTINE cal_cldfra_cu( CLDFRA_CU, CUBOTR, CUTOPR, CUPPT, &

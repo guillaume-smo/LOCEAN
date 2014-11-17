@@ -86,8 +86,7 @@ CONTAINS
      &                 ,CP,R,ELWV,ELIV,G,TFRZ,D608                      &
      &                 ,CLDEFI,LOWLYR,XLAND,CU_ACT_FLAG                 &
                       ! optional
-     &                 ,RTHCUTEN, RQVCUTEN, QWAT3D                      &
-     &                                                                  )
+     &                 ,RTHCUTEN, RQVCUTEN)!, QWAT3D)
 !-----------------------------------------------------------------------
       IMPLICIT NONE
 !-----------------------------------------------------------------------
@@ -112,8 +111,8 @@ CONTAINS
      &    ,OPTIONAL                                                     &
      &    ,INTENT(INOUT) ::                         RQVCUTEN,RTHCUTEN
 ! 
-      REAL,DIMENSION(IMS:IME,KMS:KME,JMS:JME)                           &
-     &    ,INTENT(INOUT) ::                                    QWAT3D
+!      REAL,DIMENSION(IMS:IME,KMS:KME,JMS:JME)                           &
+!     &    ,INTENT(INOUT) ::                                    QWAT3D
 !
       REAL,DIMENSION(IMS:IME,JMS:JME),INTENT(INOUT) :: CLDEFI,RAINCV,   &
            PRATEC
@@ -323,7 +322,7 @@ CONTAINS
 !
           CUTOP(I,J)=REAL(KTE+1-LTOP)
           CUBOT(I,J)=REAL(KTE+1-LBOT)
-          QWAT3D(I,:,J)=QWAT1D
+          !QWAT3D(I,:,J)=QWAT1D
 !
 !-----------------------------------------------------------------------
 !***  Begin debugging convection
