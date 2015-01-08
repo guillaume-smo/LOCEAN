@@ -818,9 +818,9 @@ CONTAINS
           DO k=kts,kte
           DO i=its,ite
             qc_save(i,k,j) = qc(i,k,j)
-            qc(i,k,j) = qc(i,k,j) + qc_cu(i,k,j)
-            CLDFRA(i,k,j)=CLDFRA(i,k,j)+cldfra_cu(i,k,j)       ! New total cloud fraction
-            CLDFRA(i,k,j)=AMIN1(1.0,CLDFRA(i,k,j))
+            qc(i,k,j)      = qc(i,k,j) + qc_cu(i,k,j)
+            CLDFRA(i,k,j)  = CLDFRA(i,k,j) + cldfra_cu(i,k,j)
+            CLDFRA(i,k,j)  = AMIN1(1.0, CLDFRA(i,k,j))
           ENDDO
           ENDDO
           ENDDO
@@ -1478,72 +1478,8 @@ CONTAINS
 
    ENDIF Radiation_step
 
-!
-! GS: RADIATIVE FLUXES ACCUMULATION IS NOW DONE IN "module_diagnostic" ROUTINE
-!
-!     accumulate_lw_select: SELECT CASE(lw_physics)
-!
-!     CASE (CAMLWSCHEME,RRTMG_LWSCHEME,RRTMSCHEME)
-!   IF(PRESENT(LWUPTC))THEN
-!   !$OMP PARALLEL DO   &
-!   !$OMP PRIVATE ( ij ,i,j,k,its,ite,jts,jte)
-!
-!   DO ij = 1 , num_tiles
-!     its = i_start(ij)
-!     ite = i_end(ij)
-!     jts = j_start(ij)
-!     jte = j_end(ij)
-!
-!        DO j=jts,jte
-!        DO i=its,ite
-!           ACLWUPT(I,J) = ACLWUPT(I,J) + LWUPT(I,J)*DT
-!           ACLWUPTC(I,J) = ACLWUPTC(I,J) + LWUPTC(I,J)*DT
-!           ACLWDNT(I,J) = ACLWDNT(I,J) + LWDNT(I,J)*DT
-!           ACLWDNTC(I,J) = ACLWDNTC(I,J) + LWDNTC(I,J)*DT
-!           ACLWUPB(I,J) = ACLWUPB(I,J) + LWUPB(I,J)*DT
-!           ACLWUPBC(I,J) = ACLWUPBC(I,J) + LWUPBC(I,J)*DT
-!           ACLWDNB(I,J) = ACLWDNB(I,J) + LWDNB(I,J)*DT
-!           ACLWDNBC(I,J) = ACLWDNBC(I,J) + LWDNBC(I,J)*DT
-!        ENDDO
-!        ENDDO
-!   ENDDO
-!   !$OMP END PARALLEL DO
-!   ENDIF
-!     CASE DEFAULT
-!     END SELECT accumulate_lw_select
-!
-!     accumulate_sw_select: SELECT CASE(sw_physics)
-!
-!     CASE (CAMSWSCHEME,RRTMG_SWSCHEME,GSFCSWSCHEME)
-!   IF(PRESENT(SWUPTC))THEN
-!   !$OMP PARALLEL DO   &
-!   !$OMP PRIVATE ( ij ,i,j,k,its,ite,jts,jte)
-!
-!   DO ij = 1 , num_tiles
-!     its = i_start(ij)
-!     ite = i_end(ij)
-!     jts = j_start(ij)
-!     jte = j_end(ij)
-!
-!        DO j=jts,jte
-!        DO i=its,ite
-!           ACSWUPT(I,J) = ACSWUPT(I,J) + SWUPT(I,J)*DT
-!           ACSWUPTC(I,J) = ACSWUPTC(I,J) + SWUPTC(I,J)*DT
-!           ACSWDNT(I,J) = ACSWDNT(I,J) + SWDNT(I,J)*DT
-!           ACSWDNTC(I,J) = ACSWDNTC(I,J) + SWDNTC(I,J)*DT
-!           ACSWUPB(I,J) = ACSWUPB(I,J) + SWUPB(I,J)*DT
-!           ACSWUPBC(I,J) = ACSWUPBC(I,J) + SWUPBC(I,J)*DT
-!           ACSWDNB(I,J) = ACSWDNB(I,J) + SWDNB(I,J)*DT
-!           ACSWDNBC(I,J) = ACSWDNBC(I,J) + SWDNBC(I,J)*DT
-!        ENDDO
-!        ENDDO
-!   ENDDO
-!   !$OMP END PARALLEL DO
-!   ENDIF
-!     CASE DEFAULT
-!     END SELECT accumulate_sw_select
-
    END SUBROUTINE radiation_driver
+
 
    SUBROUTINE pre_radiation_driver ( grid, config_flags                   &
               ,itimestep, ra_call_offset                                  &
@@ -2096,12 +2032,24 @@ CONTAINS
          !CALL wrf_debug (100, wrf_err_message )
        ENDIF
 
-       IF ((CUTOP(i,j)-CUBOT(i,j).GT.1.0).AND.(CUPPT(i,j).LT.1.E-7)) THEN
-         DO k = CUBOT(i,j),CUTOP(i,j)
+       !IF ((CUTOP(i,j)-CUBOT(i,j).GT.1.0).AND.(CUPPT(i,j).LT.1.E-7)) THEN
+         !DO k = CUBOT(i,j),CUTOP(i,j)
            !http://www.nco.ncep.noaa.gov/pmb/codes//nwprod/ngac.v1.0.0/sorc/ngac_fcst.fd/atmos/phys/module_RA_RRTM.F90
-           QC_CU(i,k,j) = 1.E-5
-         ENDDO
-       ENDIF
+           !-- After several tuning experiments, a value for QW_CU=0.003 g/kg should 
+           !   produce a cloud fraction of O(25%) and a SW reduction of O(100 W/m**2) 
+           !   for shallow convection with a maximum depth/thickness of O(200 hPa).
+           !-- QW_Cu=0.003 g/kg, which translates to a 3% cloud fraction in 
+           !   subroutine progcld2 at each model layer near line 960 in 
+           !   radiation_clouds.f, which translates to a O(25%) total cloud fraction
+           !   in the lower atmosphere (i.e., for "low-level" cloud fractions).
+           !http://www.nco.ncep.noaa.gov/pmb/codes//nwprod/ngac.v1.0.0/sorc/ngac_fcst.fd/atmos/phys/module_RA_RRTM.F90
+           !-- The following are valid at 1000 hPa, actual values are normalized by pressure
+           !-- 100% cloud fractions at 0.1 g/kg cloud mixing ratios
+           !-- 10% cloud fractions at 0.01 g/kg cloud mixing ratios
+           !-- 1% cloud fractions at 0.001 g/kg cloud mixing ratios
+           !QC_CU(i,k,j) = 1.E-5
+         !ENDDO
+       !ENDIF
 
      ENDDO
      ENDDO
@@ -2140,10 +2088,10 @@ CONTAINS
      REAL, INTENT(OUT),   DIMENSION(ims:ime, jms:jme)           :: CUBOTR, CUTOPR
      REAL, INTENT(INOUT), DIMENSION(ims:ime, kms:kme, jms:jme ) :: CLDFRA_CU
 
-     ! Table 1 from Slingo (1987) modified by Ferrier
-     REAL, DIMENSION(10) :: CC, PPT
-     CC=(/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0/)
-     PPT=(/0.,.14,.31,.70,1.6,3.4,7.7,17.,38.,85./)
+     REAL, DIMENSION(10), PARAMETER :: CC, PPT
+     !CC = (/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0/) ! Table 1 from Slingo 87 modified by Ferrier
+     CC = (/0. , 0.,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8/) ! Table 1 from Slingo 87 (no shallow convection)
+     PPT= (/0. ,.14,.31,.70,1.6,3.4,7.7,17.,38.,85./) ! mm/day
 
      !----------------------CONVECTION--------------------------------------
      ! NRADPP IS THE NUMBER OF TIME STEPS TO ACCUMULATE CONVECTIVE PRECIP FOR RADIATION
